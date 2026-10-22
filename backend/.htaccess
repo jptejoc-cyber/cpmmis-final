@@ -1,0 +1,24 @@
+# Protect include-only and sensitive files from direct web access
+<FilesMatch "^(db_config|session_init|functions|mail_config|mailer|csrf|chat_common)\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block access to log files, SQL dumps, and backup artifacts
+<FilesMatch "\.(log|sql|sql\.bak|txt|zip|bak|old|swp)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+Require all granted

@@ -1,0 +1,21 @@
+node_modules/
+uploads/
+backend/system/temp_backups/
+backend/migrations/temp_backups/
+.schema_*
+package-lock.json
+
+# Security sensitive
+.env
+.env.local
+*.key
+*.pem
+schema.txt
+schema_out.txt
+schema.sql
+CORRECTED_DATA_DICTIONARY.md
+
+# Runtime logs and one-shot diagnostics
+*.log
+backend/mail_test.php
+diagnose_task_upload.php

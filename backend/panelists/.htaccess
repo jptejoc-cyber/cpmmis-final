@@ -1,0 +1,2 @@
+# Panelist role is deprecated/removed. Deny all web access.
+Require all denied

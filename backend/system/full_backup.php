@@ -141,6 +141,15 @@ if (file_exists($sql_path)) {
 // STAGE 3: STREAM DIRECT DOWNLOAD STREAM
 // ==========================================
 if (file_exists($zip_path)) {
+    log_activity(
+        $conn,
+        (int)$_SESSION['user_id'],
+        'admin',
+        $_SESSION['username'] ?? '',
+        'Downloaded full system backup',
+        $zip_filename
+    );
+
     header('Content-Description: File Transfer');
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename="' . $zip_filename . '"');

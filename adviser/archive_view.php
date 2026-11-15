@@ -112,9 +112,10 @@ function renderArchiveRows($conn, $search = '', $year = '', $adviser = '', $tab 
                         <div class='flex justify-end gap-2 relative z-20'>";
 
             if (!empty($dbFile)) {
-                echo "<a href='$view_url' target='_blank' class='inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white shadow-sm'>
+                $title_attr = htmlspecialchars($dbTitle, ENT_QUOTES, 'UTF-8');
+                echo "<button type='button' onclick=\"openArchiveContents($dbId, this.dataset.title)\" data-title=\"$title_attr\" title=\"View PDF Chapters\" class='inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white shadow-sm'>
                         <i class='fas fa-eye text-xs'></i>
-                      </a>
+                      </button>
                       <a href='$view_url' download class='inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/10 text-blue-400 hover:bg-blue-600 hover:text-white shadow-sm'>
                         <i class='fas fa-download text-xs'></i>
                       </a>";
@@ -178,6 +179,9 @@ $unread_count = $unread_stmt->get_result()->fetch_assoc()['unread'] ?? 0;
 <!DOCTYPE html>
 <html lang="en" style="background-color: #F0F2F5; color-scheme: light;">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light">
     <style>
@@ -185,7 +189,7 @@ $unread_count = $unread_stmt->get_result()->fetch_assoc()['unread'] ?? 0;
     </style>
     <title>Archive Vault | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#F0F2F5">
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -263,6 +267,10 @@ $unread_count = $unread_stmt->get_result()->fetch_assoc()['unread'] ?? 0;
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex" style="background-color: #F0F2F5; color-scheme: light;">
 
@@ -465,23 +473,23 @@ $unread_count = $unread_stmt->get_result()->fetch_assoc()['unread'] ?? 0;
         <!-- Filters -->
         <div class="sticky top-0 z-50 -mx-4 px-4 py-3 bg-gradient-to-b from-[#F0F2F5] via-[#F0F2F5]/90 to-transparent backdrop-blur-md">
             <nav class="premium-card rounded-[2.5rem] px-8 py-4 flex flex-wrap justify-between items-center shadow-2xl gap-4 bg-white border border-gray-200">
-                <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-gray-200">
-                    <button onclick="filterTab('all')" id="tab-all" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active">All</button>
-                    <button onclick="filterTab('best')" id="tab-best" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600">&#127942; Best</button>
-                    <button onclick="filterTab('regular')" id="tab-regular" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600">Standard</button>
+                <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-gray-200 w-full sm:w-auto overflow-x-auto">
+                    <button onclick="filterTab('all')" id="tab-all" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active whitespace-nowrap">All</button>
+                    <button onclick="filterTab('best')" id="tab-best" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap">&#127942; Best</button>
+                    <button onclick="filterTab('regular')" id="tab-regular" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap">Standard</button>
                 </div>
-                <div class="flex items-center gap-3 flex-1 justify-end max-w-2xl">
-                    <div class="relative flex-1 group min-w-[200px]">
+                <div class="flex flex-wrap items-center gap-3 flex-1 justify-end max-w-2xl w-full sm:w-auto">
+                    <div class="relative flex-1 group min-w-0 w-full sm:w-auto sm:min-w-[200px]">
                         <input type="text" id="searchInput" oninput="fetchResults()" placeholder="SEARCH VAULT..." class="w-full bg-slate-100 border border-gray-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase text-slate-900 outline-none focus:border-blue-500/50 shadow-inner">
                         <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                     </div>
-                    <select id="yearSelect" class="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer focus:border-blue-500/50 shadow-inner" onchange="fetchResults()">
+                    <select id="yearSelect" class="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer focus:border-blue-500/50 shadow-inner" onchange="fetchResults()">
                         <option value="" class="bg-white text-slate-500 font-bold uppercase">All Years</option>
                         <?php mysqli_data_seek($years_query, 0); while ($yr = mysqli_fetch_assoc($years_query)): ?>
                         <option value="<?php echo $yr['year']; ?>" class="bg-white text-slate-900 font-bold uppercase"><?php echo $yr['year']; ?></option>
                         <?php endwhile; ?>
                     </select>
-                    <select id="adviserSelect" class="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer max-w-[150px] focus:border-blue-500/50 shadow-inner" onchange="fetchResults()">
+                    <select id="adviserSelect" class="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer max-w-none sm:max-w-[150px] focus:border-blue-500/50 shadow-inner" onchange="fetchResults()">
                         <option value="" class="bg-white text-slate-500 font-bold uppercase">All Advisers</option>
                         <?php foreach ($registered_advisers as $adv_name): ?>
                         <option value="<?php echo htmlspecialchars($adv_name); ?>" class="bg-white text-slate-900 font-bold uppercase"><?php echo htmlspecialchars(strtoupper($adv_name)); ?></option>
@@ -704,10 +712,10 @@ $unread_count = $unread_stmt->get_result()->fetch_assoc()['unread'] ?? 0;
         function filterTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600";
+                btn.className = "tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap";
             });
             const activeBtn = document.getElementById('tab-' + tab);
-            activeBtn.className = "tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active";
+            activeBtn.className = "tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active whitespace-nowrap";
             fetchResults();
         }
 
@@ -955,6 +963,7 @@ $unread_count = $unread_stmt->get_result()->fetch_assoc()['unread'] ?? 0;
         setInterval(updateLiveTimes, 30000);
         updateLiveTimes();
     </script>
+    <?php include('../components/archive_contents.php'); ?>
     <?php include('chat_widget.php'); ?>
 </body>
 </html>

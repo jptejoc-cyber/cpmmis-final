@@ -75,10 +75,13 @@ $logins_q = $stmt->get_result();
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Group Management | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -116,7 +119,7 @@ $logins_q = $stmt->get_result();
         .logo-section { display: flex; flex-direction: row; align-items: center; padding: 1.5rem 0; margin-bottom: 2.5rem; transition: all 0.3s ease; width: 100%; justify-content: flex-start; padding-left: 1.35rem; }
         .brand-text-container { max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: all 0.3s ease; width: 100%; }
         aside:hover .brand-text-container { max-width: 200px; opacity: 1; margin-left: 1rem; }
-        .brand-text { font-size: 1.25rem; font-weight: 800; color: white; letter-spacing: -0.025em; }
+        .brand-text { font-size: 1.25rem; font-weight: 800; color: #1877F2; letter-spacing: -0.025em; width: 100%; }
 
         .sidebar-link { display: flex; align-items: center; gap: 1.25rem; padding: 1rem 1.45rem; border-radius: 1rem; transition: background-color 0.3s ease, box-shadow 0.3s ease; color: #65676b; width: 100%; justify-content: flex-start; }
         .sidebar-text { opacity: 0; display: none; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
@@ -169,6 +172,10 @@ $logins_q = $stmt->get_result();
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -347,53 +354,14 @@ $logins_q = $stmt->get_result();
                                         $status = $row['status'] ?? 'pending';
                                         if ($status === 'active' || $status === 'approved'): 
                                             // Compute Health Status
-                                            $health_status = 'blue';
-                                            $health_label = 'On Track';
-                                            $group_id = $row['id'];
-                                            $g_adviser = $row['adviser_id'];
-
-                                            $stmt = $conn->prepare("SELECT id, deadline FROM adviser_tasks WHERE adviser_id = ? AND task_type = 'chapter'");
-                                            $stmt->bind_param("i", $g_adviser);
-                                            $stmt->execute();
-                                            $tasks_q = $stmt->get_result();
-                                            if ($tasks_q && mysqli_num_rows($tasks_q) > 0) {
-                                                $now = time();
-                                                while ($t = mysqli_fetch_assoc($tasks_q)) {
-                                                    $task_id = $t['id'];
-                                                    if (empty($t['deadline'])) continue;
-                                                    $deadline_time = strtotime($t['deadline']);
-                                                    $diff_days = ($deadline_time - $now) / 86400;
-
-                                                    $stmt2 = $conn->prepare("SELECT id FROM group_submissions WHERE task_id = ? AND group_id = ?");
-                                                    $stmt2->bind_param("ii", $task_id, $group_id);
-                                                    $stmt2->execute();
-                                                    $sub_q = $stmt2->get_result();
-                                                    $has_submitted = ($sub_q && mysqli_num_rows($sub_q) > 0);
-
-                                                    if (!$has_submitted) {
-                                                        if ($diff_days < 0) {
-                                                            $health_status = 'red';
-                                                            $health_label = 'At Risk';
-                                                            break; // Worst status wins
-                                                        } elseif ($diff_days <= 3) {
-                                                            if ($health_status !== 'red') {
-                                                                $health_status = 'yellow';
-                                                                $health_label = 'Needs Attention';
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            // A group with ALL FIVE chapters (1-5) approved is fully complete.
-                                            $stmt = $conn->prepare("SELECT COUNT(DISTINCT chapter_number) AS c FROM group_submissions WHERE group_id = ? AND status = 'approved' AND chapter_number BETWEEN 1 AND 5");
-                                            $stmt->bind_param("i", $group_id);
-                                            $stmt->execute();
-                                            $fin_q = $stmt->get_result();
-                                            $fin_row = $fin_q ? mysqli_fetch_assoc($fin_q) : null;
-                                            if ($fin_row && (int)$fin_row['c'] >= 5) {
+                                            $group_health = calculate_group_health($conn, $row['id']);
+                                            $health_label = $group_health['label'];
+                                            if ($group_health['status'] === 'needs_attention') {
+                                                $health_status = 'yellow';
+                                            } elseif ($group_health['status'] === 'at_risk') {
+                                                $health_status = 'red';
+                                            } else {
                                                 $health_status = 'blue';
-                                                $health_label = 'Completed';
                                             }
 
                                             $health_theme = 'bg-blue-500/10 text-blue-400 border-blue-500/20';

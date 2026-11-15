@@ -96,10 +96,13 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Faculty Management | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -194,6 +197,10 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -472,7 +479,7 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label class="text-[9px] font-black uppercase text-slate-500 ml-2 tracking-widest">Username</label>
                         <div class="relative group">

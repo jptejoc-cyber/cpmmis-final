@@ -87,8 +87,8 @@ $logins_q = $stmt->get_result();
 if ($group_status === 'active' || $group_status === 'approved' || $group_status === 'accepted') {
     $g_adviser = $group_data['adviser_id'];
     if ($g_adviser) {
-        $stmt = $conn->prepare("SELECT id, deadline, chapter_number FROM adviser_tasks WHERE adviser_id = ? AND task_type = 'chapter'");
-        $stmt->bind_param("i", $g_adviser);
+        $stmt = $conn->prepare("SELECT id, deadline, chapter_number FROM adviser_tasks WHERE adviser_id = ? AND task_type = 'chapter' AND created_at >= ?");
+        $stmt->bind_param("is", $g_adviser, $group_data['created_at']);
         $stmt->execute();
         $tasks_check = $stmt->get_result();
         if ($tasks_check && mysqli_num_rows($tasks_check) > 0) {
@@ -144,10 +144,13 @@ if ($group_status === 'pending'):
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Pending Access | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="color-scheme" content="light">
     <style>html{background:#F0F2F5;color-scheme:light}</style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -162,8 +165,11 @@ if ($group_status === 'pending'):
             color: #1c1e21; 
         }
     </style>
+
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
     <div class="bg-slate-100 border border-gray-200 backdrop-blur-3xl p-12 rounded-[3rem] shadow-2xl text-center max-w-md w-full relative overflow-hidden">
         <div class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div class="w-20 h-20 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6"><i class="fas fa-clock"></i></div>
@@ -200,10 +206,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Student Command Workspace | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="color-scheme" content="light">
     <style>html{background:#F0F2F5;color-scheme:light}</style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -296,6 +305,10 @@ document.addEventListener("DOMContentLoaded", function() {
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 

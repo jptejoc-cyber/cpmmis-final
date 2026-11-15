@@ -75,6 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("isi", $adviser_id, $notif_msg, $meeting_id);
         $stmt->execute();
 
+        log_activity(
+            $conn,
+            $group_id,
+            'group',
+            $group_name,
+            'Requested consultation',
+            date('M d, Y g:i A', strtotime($meeting_time)) . ' — ' . $agenda
+        );
+
         header("Location: ../../group/meetings.php?status=success");
         exit();
     } else {

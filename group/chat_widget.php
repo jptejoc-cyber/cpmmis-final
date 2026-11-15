@@ -227,45 +227,46 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'group') {
                 }
             }
 
-            let lastRenderedCount = 0;
+            function getMessageKey(msg) {
+                if (msg.id !== undefined && msg.id !== null && msg.id !== '') return String(msg.id);
+                if (msg._pendingId) return String(msg._pendingId);
+                return String(msg.created_at || '') + '|' + String(msg.message || '');
+            }
 
             function renderMessages(messages, pendingIds) {
                 const feed = document.getElementById('group-chat-bar-messages');
                 if (!feed) return;
 
-                const totalMsgs = messages.length + (pendingIds ? pendingIds.length : 0);
-                const wasAtBottom = feed.scrollHeight - feed.clientHeight <= feed.scrollTop + 100;
+                // Polling used to rebuild the whole feed every 3 seconds. That replayed
+                // the entrance animation on every bubble and could force the feed back
+                // to the bottom while the user was reading older messages.
+                const signature = messages.map(getMessageKey).join('|') + '::' + (pendingIds || []).join('|');
+                if (feed.dataset.renderSignature === signature) return;
 
-                if (grpFeedLoaded && totalMsgs === lastRenderedCount) {
-                    const pendingElements = feed.querySelectorAll('[data-pending]');
-                    if (pendingIds && pendingIds.length > 0) {
-                        pendingElements.forEach(el => {
-                            if (!pendingIds.includes(el.getAttribute('data-pending'))) el.remove();
-                        });
-                    } else {
-                        pendingElements.forEach(el => el.remove());
-                    }
-                    return;
-                }
-
+                const previousKeys = new Set(Array.from(feed.querySelectorAll('[data-msg-id]')).map(el => el.getAttribute('data-msg-id')));
+                const firstRender = !feed.dataset.renderSignature;
+                const wasAtBottom = feed.scrollHeight - feed.clientHeight <= feed.scrollTop + 40;
+                const previousScrollTop = feed.scrollTop;
                 let html = "";
+
                 messages.forEach(msg => {
-                    html += buildBubble(msg, false);
+                    const messageKey = getMessageKey(msg);
+                    const isPending = msg._pendingId && pendingIds && pendingIds.includes(msg._pendingId);
+                    const animateIn = !firstRender && !previousKeys.has(messageKey);
+                    html += buildBubble(msg, isPending, animateIn);
                 });
-                if (pendingIds && pendingIds.length > 0) {
-                    pendingIds.forEach(pid => {
-                        const q = getOfflineQueue().find(x => x._pendingId === pid);
-                        if (q) html += buildBubble({ sender_role: 'group', message: q.message, created_at: q.created_at, _pendingId: pid }, true);
-                    });
-                }
                 if (html === "") html = `<div class="text-center text-slate-500 text-[8px] py-10 font-bold uppercase italic tracking-wider">No messages yet. Say hello!</div>`;
                 feed.innerHTML = html;
-                lastRenderedCount = totalMsgs;
+                feed.dataset.renderSignature = signature;
                 grpFeedLoaded = true;
-                if (wasAtBottom || feed.scrollTop === 0) feed.scrollTop = feed.scrollHeight;
+
+                // Follow new messages only when the reader is already at the bottom.
+                // Otherwise keep their current reading position.
+                if (wasAtBottom || firstRender) feed.scrollTop = feed.scrollHeight;
+                else feed.scrollTop = previousScrollTop;
             }
 
-            function buildBubble(msg, isPending) {
+            function buildBubble(msg, isPending, animateIn) {
                 const isMe = (msg.sender_role === 'group');
                 const bubbleClass = isMe ? "bg-blue-600 text-white rounded-tr-none ml-auto" : "bg-slate-100 text-slate-700 rounded-tl-none mr-auto border border-gray-200";
                 const timeClass = isMe ? "text-blue-100" : "text-slate-600";
@@ -278,9 +279,10 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'group') {
                     return `${dateStr}, ${timeStr}`;
                 };
                 const time = formatMsgDate(msg.created_at);
+                const messageKey = getMessageKey(msg);
                 const pendingDot = isPending ? ' <span class="text-amber-400" title="Sending..."><i class="fas fa-clock text-[7px]"></i></span>' : '';
                 const pendingAttr = isPending ? ' data-pending="' + escapeHtml(msg._pendingId) + '"' : '';
-                return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'} w-full"${pendingAttr}>
+                return `<div data-msg-id="${escapeHtml(messageKey)}" class="flex ${isMe ? 'justify-end' : 'justify-start'} w-full${animateIn ? ' animate-scale-in' : ''}"${pendingAttr}>
                     <div class="max-w-[75%] p-3 rounded-xl shadow-md ${bubbleClass} text-[11px] font-bold leading-relaxed break-words">
                         <p>${escapeHtml(msg.message)}${pendingDot}</p>
                         <span class="block text-[9px] ${timeClass} mt-1.5 text-right uppercase font-black tracking-wider">${time}</span>
@@ -394,6 +396,11 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'group') {
                 currentContactName = name;
                 currentContactRole = role || 'adviser';
                 grpFeedLoaded = false;
+                const feed = document.getElementById('group-chat-bar-messages');
+                if (feed) {
+                    feed.innerHTML = '';
+                    delete feed.dataset.renderSignature;
+                }
                 closeDropdown();
 
                 document.getElementById('group-chat-bar-name').innerText = name;
@@ -444,6 +451,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'group') {
                     } else {
                         const feed = document.getElementById('group-chat-bar-messages');
                         feed.innerHTML = '<div class="text-center text-rose-400 text-[8px] py-10 font-bold uppercase italic tracking-wider">Error: ' + escapeHtml(data.message || 'unknown') + '</div>';
+                        delete feed.dataset.renderSignature;
                     }
                 })
                 .catch(err => {
@@ -452,7 +460,9 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'group') {
                     if (cached.length > 0) {
                         renderMessages(cached.concat(pendingMsgs), pendingIds);
                     } else if (!grpFeedLoaded) {
-                        document.getElementById('group-chat-bar-messages').innerHTML = '<div class="text-center text-rose-400 text-[8px] py-10 font-bold uppercase italic tracking-wider">Connection error</div>';
+                        const feed = document.getElementById('group-chat-bar-messages');
+                        feed.innerHTML = '<div class="text-center text-rose-400 text-[8px] py-10 font-bold uppercase italic tracking-wider">Connection error</div>';
+                        delete feed.dataset.renderSignature;
                     }
                 });
             }

@@ -64,6 +64,8 @@ if ($deleted) {
     $pattern = 'Capstone Archive Added: %';
     $stmt2->bind_param("si", $pattern, $archive_id);
     $stmt2->execute();
+
+    log_activity($conn, (int)$_SESSION['user_id'], 'admin', $_SESSION['username'] ?? '', 'Deleted archive', $title_to_remove);
     echo json_encode(['status' => 'success']);
     exit();
 } else {

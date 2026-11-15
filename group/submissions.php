@@ -43,7 +43,7 @@ $group_status = strtolower($group_data['status'] ?? 'pending');
 // --- 3-DAY DEADLINE REMINDER TRIGGER LOGIC ---
 if ($group_status === 'active' || $group_status === 'approved' || $group_status === 'accepted') {
     if ($adviser_id) {
-        $tasks_check = mysqli_query($conn, "SELECT id, deadline, chapter_number FROM adviser_tasks WHERE adviser_id = " . (int)$adviser_id . " AND task_type = 'chapter'");
+        $tasks_check = mysqli_query($conn, "SELECT id, deadline, chapter_number FROM adviser_tasks WHERE adviser_id = " . (int)$adviser_id . " AND task_type = 'chapter' AND created_at >= '" . mysqli_real_escape_string($conn, $group_data['created_at']) . "'");
         if ($tasks_check && mysqli_num_rows($tasks_check) > 0) {
             $now = time();
             while($tc = mysqli_fetch_assoc($tasks_check)) {
@@ -108,10 +108,13 @@ if (isset($_SESSION['success'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Tasks & Submissions | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="color-scheme" content="light">
     <style>html{background:#F0F2F5;color-scheme:light}</style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -172,6 +175,10 @@ if (isset($_SESSION['success'])) {
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -228,12 +235,12 @@ if (isset($_SESSION['success'])) {
     <main class="flex-1 ml-0 md:ml-24 p-6 sm:p-8 lg:p-12 space-y-6 sm:space-y-10 relative z-10">
         
         <nav class="premium-card rounded-[2.5rem] px-4 sm:px-8 py-4 flex flex-wrap justify-between items-center gap-2 shadow-2xl relative z-[100]">
-            <div class="flex items-center gap-6 min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-3 sm:gap-6 min-w-0 flex-1">
                 <div>
                     <h2 class="text-lg font-black text-slate-900 uppercase tracking-tight leading-none truncate">Task Feed</h2>
                     <p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mt-1">Adviser Submissions</p>
                 </div>
-                <div class="h-10 w-[1px] bg-slate-100 mx-2"></div>
+                <div class="hidden sm:block h-10 w-[1px] bg-slate-100 mx-2"></div>
                 <div class="flex flex-col">
                     <span class="text-[7px] font-black text-slate-500 uppercase tracking-widest">Assigned Adviser</span>
                     <span class="text-[11px] font-extrabold text-slate-600 uppercase flex items-center gap-2 mt-0.5">
@@ -428,10 +435,10 @@ if (isset($_SESSION['success'])) {
                         </div>
                         
                         <?php if($task['file_path']): ?>
-                            <div class="p-4 bg-slate-100 rounded-2xl border border-gray-200 shadow-inner inline-block">
+                            <div class="p-4 bg-slate-100 rounded-2xl border border-gray-200 shadow-inner inline-block max-w-full">
                                 <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Attached Resource:</p>
-                                <a href="../backend/serve_file.php?type=tasks&file=<?php echo urlencode(htmlspecialchars($task['file_path'])); ?>" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-500/10 text-slate-500 border border-slate-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-500/20 hover:text-blue-600 transition-all">
-                                    <i class="fas fa-download text-sm"></i> <?php echo htmlspecialchars($task['original_filename']); ?>
+                                <a href="../backend/serve_file.php?type=tasks&file=<?php echo urlencode(htmlspecialchars($task['file_path'])); ?>" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-500/10 text-slate-500 border border-slate-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-500/20 hover:text-blue-600 transition-all max-w-full">
+                                    <i class="fas fa-download text-sm shrink-0"></i> <span class="min-w-0 break-words"><?php echo str_replace('_', '_&#8203;', htmlspecialchars($task['original_filename'])); ?></span>
                                 </a>
                             </div>
                         <?php endif; ?>

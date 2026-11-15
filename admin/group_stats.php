@@ -79,45 +79,9 @@ $completed_count = count(array_filter($chapters, fn($s) => $s === 'Completed'));
 $percent = $completed_count * 20;
 $all_chapters_complete = ($completed_count === 5); // Final Project unlocks when all 5 chapters approved
 
-// Compute Health Status dynamically (mirrors adviser_dashboard.php)
-$health_status = 'on_track';
-$tasks_q = mysqli_query($conn, "SELECT adviser_id FROM `group` WHERE id = " . (int)$group_id);
-$group_adviser = mysqli_fetch_assoc($tasks_q);
-if ($group_adviser && $group_adviser['adviser_id']) {
-    $adviser_id = $group_adviser['adviser_id'];
-    $tasks_q = mysqli_query($conn, "SELECT id, deadline FROM adviser_tasks WHERE adviser_id = " . (int)$adviser_id . " AND task_type = 'chapter'");
-    if ($tasks_q && mysqli_num_rows($tasks_q) > 0) {
-        $now = time();
-        while ($t = mysqli_fetch_assoc($tasks_q)) {
-            $task_id = $t['id'];
-            if (empty($t['deadline'])) continue;
-            
-            $deadline_time = strtotime($t['deadline']);
-            $diff_days = ($deadline_time - $now) / 86400;
-
-            $sub_q = mysqli_query($conn, "SELECT id FROM group_submissions WHERE task_id = " . (int)$task_id . " AND group_id = " . (int)$group_id);
-            $has_submitted = ($sub_q && mysqli_num_rows($sub_q) > 0);
-
-            if (!$has_submitted) {
-                if ($diff_days < 0) {
-                    $health_status = 'at_risk';
-                    break; // Worst status wins
-                } elseif ($diff_days <= 3) {
-                    if ($health_status !== 'at_risk') {
-                        $health_status = 'needs_attention';
-                    }
-                }
-            }
-        }
-    }
-}
-
-// A group with ALL FIVE chapters (1-5) approved is fully complete, overriding task health.
-$fin_q = mysqli_query($conn, "SELECT COUNT(DISTINCT chapter_number) AS c FROM group_submissions WHERE group_id = " . (int)$group_id . " AND status = 'approved' AND chapter_number BETWEEN 1 AND 5");
-$fin_row = $fin_q ? mysqli_fetch_assoc($fin_q) : null;
-if ($fin_row && (int)$fin_row['c'] >= 5) {
-    $health_status = 'completed';
-}
+// Compute Health Status dynamically
+$health = calculate_group_health($conn, $group_id);
+$health_status = $health['status'];
 
 $submissions_result = mysqli_query($conn, "SELECT * FROM group_submissions WHERE group_id = " . (int)$group_id . " ORDER BY submitted_at DESC LIMIT 500");
 $meetings_result = mysqli_query($conn, "SELECT * FROM meeting_requests WHERE group_id = " . (int)$group_id . " ORDER BY created_at DESC LIMIT 500");
@@ -126,10 +90,13 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title><?php echo htmlspecialchars($group['username']); ?> | Admin Monitoring</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -256,15 +223,14 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
         th { font-size: 9px !important; letter-spacing: 0.1em; }
         td { padding: 1rem 0.75rem !important; }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
     <div class="ambient-glow"></div>
-    <button class="sidebar-toggle-btn" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-        <i class="fas fa-bars text-sm"></i>
-    </button>
-    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
-
     <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[999] transform -translate-y-20 transition-all duration-500 opacity-0 pointer-events-none">
         <div class="bg-white text-slate-800 px-8 py-4 rounded-2xl shadow-xl flex items-center gap-4 border border-blue-500/30">
             <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center"><i class="fas fa-check text-xs text-white"></i></div>
@@ -290,7 +256,7 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
                         if ($health_status === 'completed') {
                             $hs_label = 'Completed'; $hs_icon = 'fa-check-double'; $hs_color = 'blue';
                         } elseif ($health_status === 'need_attention' || $health_status === 'needs_attention' || $health_status === 'need attention') {
-                            $hs_label = 'Need Attention'; $hs_icon = 'fa-exclamation-triangle'; $hs_color = 'amber';
+                            $hs_label = 'Needs Attention'; $hs_icon = 'fa-exclamation-triangle'; $hs_color = 'amber';
                         } elseif ($health_status === 'at_risk' || $health_status === 'at risk') {
                             $hs_label = 'At Risk'; $hs_icon = 'fa-times-circle'; $hs_color = 'rose';
                         }
@@ -303,8 +269,8 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
                 <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider line-clamp-1 max-w-xl truncate"><?php echo htmlspecialchars($group['project_title'] ?: 'UNTITLED RESEARCH SPACE'); ?></p>
             </div>
             
-            <div class="flex items-center gap-4 shrink-0">
-                <div class="bg-slate-100 rounded-2xl px-5 py-2.5 flex items-center shadow-sm border border-gray-200 gap-4">
+            <div class="flex flex-wrap items-center justify-end gap-3 sm:gap-4 w-full sm:w-auto">
+                <div class="bg-slate-100 rounded-2xl px-4 sm:px-5 py-2.5 flex items-center shadow-sm border border-gray-200 gap-4 shrink-0">
                     <div class="text-right">
                         <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">COMPLETION RATE</p>
                         <p class="text-lg font-black text-slate-900 leading-none"><?php echo $percent; ?>%</p>
@@ -669,10 +635,6 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
         }
 
         function togglePass(id, btn) { const input = document.getElementById(id); const icon = btn.querySelector('i'); if (input.type === "password") { input.type = "text"; icon.classList.replace('fa-eye', 'fa-eye-slash'); } else { input.type = "password"; icon.classList.replace('fa-eye-slash', 'fa-eye'); } }
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-backdrop').classList.toggle('open');
-        }
 
         // Health status update function
         function updateHealthStatus() {
@@ -689,7 +651,7 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
                             if (status === 'completed') {
                                 label = 'Completed'; icon = 'fa-check-double'; color = 'blue';
                             } else if (status === 'needs_attention') {
-                                label = 'Need Attention'; icon = 'fa-exclamation-triangle'; color = 'amber';
+                                label = 'Needs Attention'; icon = 'fa-exclamation-triangle'; color = 'amber';
                             } else if (status === 'at_risk') {
                                 label = 'At Risk'; icon = 'fa-times-circle'; color = 'rose';
                             }

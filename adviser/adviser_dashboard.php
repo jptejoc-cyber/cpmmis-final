@@ -69,12 +69,15 @@ $highlight_id = isset($_GET['highlight']) ? mysqli_real_escape_string($conn, $_G
 <!DOCTYPE html>
 <html lang="en" style="background-color: #F0F2F5; color-scheme: light;">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light">
     <style>html, body { background-color: #F0F2F5 !important; color-scheme: light; }</style>
     <title>Adviser Command | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#F0F2F5">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -173,6 +176,10 @@ $highlight_id = isset($_GET['highlight']) ? mysqli_real_escape_string($conn, $_G
         }
         .highlight-row { animation: highlightFade 3s ease-in-out forwards; }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex" style="background-color: #F0F2F5; color-scheme: light;">
 
@@ -449,53 +456,14 @@ $highlight_id = isset($_GET['highlight']) ? mysqli_real_escape_string($conn, $_G
                                 <td class="px-4 sm:px-10 py-4 sm:py-6">
                                     <?php 
                                         // Compute Health Status
-                                        $health_status = 'blue';
-                                        $health_label = 'On Track';
-                                        $group_id = $row['id'];
-                                        $g_adviser = $row['adviser_id'];
-
-                                        $task_stmt = $conn->prepare("SELECT id, deadline FROM adviser_tasks WHERE adviser_id = ? AND task_type = 'chapter'");
-                                        $task_stmt->bind_param("i", $g_adviser);
-                                        $task_stmt->execute();
-                                        $tasks_q = $task_stmt->get_result();
-                                        if ($tasks_q && mysqli_num_rows($tasks_q) > 0) {
-                                            $now = time();
-                                            while ($t = mysqli_fetch_assoc($tasks_q)) {
-                                                $task_id = $t['id'];
-                                                if (empty($t['deadline'])) continue;
-                                                $deadline_time = strtotime($t['deadline']);
-                                                $diff_days = ($deadline_time - $now) / 86400;
-
-                                                $sub_stmt = $conn->prepare("SELECT id FROM group_submissions WHERE task_id = ? AND group_id = ?");
-                                                $sub_stmt->bind_param("ii", $task_id, $group_id);
-                                                $sub_stmt->execute();
-                                                $sub_q = $sub_stmt->get_result();
-                                                $has_submitted = ($sub_q && mysqli_num_rows($sub_q) > 0);
-
-                                                if (!$has_submitted) {
-                                                    if ($diff_days < 0) {
-                                                        $health_status = 'red';
-                                                        $health_label = 'At Risk';
-                                                        break; // Worst status wins
-                                                    } elseif ($diff_days <= 3) {
-                                                        if ($health_status !== 'red') {
-                                                            $health_status = 'yellow';
-                                                            $health_label = 'Needs Attention';
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        // A group with ALL FIVE chapters (1-5) approved is fully complete.
-                                        $fin_stmt = $conn->prepare("SELECT COUNT(DISTINCT chapter_number) AS c FROM group_submissions WHERE group_id = ? AND status = 'approved' AND chapter_number BETWEEN 1 AND 5");
-                                        $fin_stmt->bind_param("i", $group_id);
-                                        $fin_stmt->execute();
-                                        $fin_q = $fin_stmt->get_result();
-                                        $fin_row = $fin_q ? mysqli_fetch_assoc($fin_q) : null;
-                                        if ($fin_row && (int)$fin_row['c'] >= 5) {
+                                        $group_health = calculate_group_health($conn, $row['id']);
+                                        $health_label = $group_health['label'];
+                                        if ($group_health['status'] === 'needs_attention') {
+                                            $health_status = 'yellow';
+                                        } elseif ($group_health['status'] === 'at_risk') {
+                                            $health_status = 'red';
+                                        } else {
                                             $health_status = 'blue';
-                                            $health_label = 'Completed';
                                         }
 
                                         $health_theme = 'bg-blue-500/10 text-blue-400 border-blue-500/20';

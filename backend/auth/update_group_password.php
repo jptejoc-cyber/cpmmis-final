@@ -48,7 +48,7 @@ if ($ip_wait > 0) {
     exit();
 }
 
-$stmt = $conn->prepare("SELECT password FROM `group` WHERE id = ?");
+$stmt = $conn->prepare("SELECT password, username FROM `group` WHERE id = ?");
 $stmt->bind_param("i", $group_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -65,6 +65,14 @@ $stmt = $conn->prepare("UPDATE `group` SET password = ? WHERE id = ?");
 $stmt->bind_param("si", $hash, $group_id);
 
 if ($stmt->execute()) {
+    log_activity(
+        $conn,
+        $group_id,
+        'group',
+        $user['username'] ?? ($_SESSION['username'] ?? ''),
+        'Changed account password',
+        ''
+    );
     session_regenerate_id(true);
     rotate_csrf_token();
     echo json_encode(['status' => 'success', 'message' => 'success']);

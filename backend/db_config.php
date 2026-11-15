@@ -10,6 +10,13 @@ if ((getenv('CPMMIS_ENV') ?: 'local') === 'live') {
 
 define('CPMMIS_ENV', getenv('CPMMIS_ENV') ?: 'local');
 
+// Keep PHP date math (deadline windows and health status) in the same
+// timezone as the MySQL server. PHP otherwise defaults to UTC while MySQL
+// uses the host timezone, which shifts every deadline by the UTC offset and
+// lets a notified task still appear "On Track" (or a missed task appear
+// merely "Needs Attention").
+date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Manila');
+
 if (CPMMIS_ENV === 'live') {
     $host     = getenv('DB_HOST');
     $username = getenv('DB_USER');

@@ -19,3 +19,7 @@ CORRECTED_DATA_DICTIONARY.md
 *.log
 backend/mail_test.php
 diagnose_task_upload.php
+qa_reports_login.php
+
+# Office temp/lock files
+~$*

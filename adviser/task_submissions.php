@@ -35,7 +35,7 @@ $subs_q = mysqli_query($conn, "
     <style>html, body { background-color: #F0F2F5 !important; color-scheme: light; }</style>
     <title>Task Submissions | Adviser</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#F0F2F5">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -44,11 +44,17 @@ $subs_q = mysqli_query($conn, "
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-deep); background-image: none; background-size: 32px 32px; color: #1c1e21; overflow-x: hidden; }
         .premium-card { background: #ffffff; border: 1px solid #dadde1; }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
-<body class="min-h-screen p-8 lg:p-12" style="background-color: #F0F2F5; color-scheme: light;">
+<body class="min-h-screen p-4 sm:p-6 lg:p-12" style="background-color: #F0F2F5; color-scheme: light;">
     <div class="max-w-6xl mx-auto space-y-8">
         
-        <div class="flex items-center gap-4">
+        <div class="flex flex-wrap items-center gap-4">
             <a href="submissions.php" class="w-10 h-10 rounded-xl bg-slate-100 border border-gray-200 text-slate-500 hover:text-blue-400 hover:bg-blue-950/30 transition flex items-center justify-center">
                 <i class="fas fa-arrow-left"></i>
             </a>
@@ -63,21 +69,21 @@ $subs_q = mysqli_query($conn, "
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-gray-200">
                         <tr>
-                            <th class="px-10 py-5">Research Group</th>
-                            <th class="px-10 py-5">Submission Date</th>
-                            <th class="px-10 py-5 text-right">Actions</th>
+                            <th class="px-4 sm:px-10 py-5">Research Group</th>
+                            <th class="px-4 sm:px-10 py-5">Submission Date</th>
+                            <th class="px-4 sm:px-10 py-5 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 text-[11px] font-bold text-slate-600">
                         <?php if(mysqli_num_rows($subs_q) > 0): while($row = mysqli_fetch_assoc($subs_q)): ?>
                             <tr class="hover:bg-slate-100 transition-all duration-300">
-                                <td class="px-10 py-6 font-extrabold text-slate-900 uppercase text-sm leading-tight">
+                                <td class="px-4 sm:px-10 py-6 font-extrabold text-slate-900 uppercase text-sm leading-tight">
                                     <?php echo htmlspecialchars($row['group_name']); ?>
                                 </td>
-                                <td class="px-10 py-6 text-[11px] font-bold text-slate-500 uppercase">
+                                <td class="px-4 sm:px-10 py-6 text-[11px] font-bold text-slate-500 uppercase">
                                     <?php echo date('M d, Y g:i A', strtotime($row['submitted_at'])); ?>
                                 </td>
-                                <td class="px-10 py-6 text-right flex items-center justify-end gap-2">
+                                <td class="px-4 sm:px-10 py-6 text-right flex items-center justify-end gap-2">
                                     <a href="../backend/serve_file.php?type=submissions&file=<?php echo urlencode($row['file_path']); ?>" target="_blank" title="View File" class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-600 hover:text-white transition shadow-sm">
                                         <i class="fas fa-eye text-xs"></i>
                                     </a>
@@ -85,7 +91,7 @@ $subs_q = mysqli_query($conn, "
                                 </td>
                             </tr>
                         <?php endwhile; else: ?>
-                            <tr><td colspan="3" class="px-10 py-20 text-center text-slate-500 font-black text-[10px] uppercase italic tracking-widest">No submissions yet.</td></tr>
+                            <tr><td colspan="3" class="px-4 sm:px-10 py-20 text-center text-slate-500 font-black text-[10px] uppercase italic tracking-widest">No submissions yet.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

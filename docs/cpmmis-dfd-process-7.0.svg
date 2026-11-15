@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 700" width="1040" height="700">
+  <defs>
+    <!-- Sharp crisp arrow markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#1e293b" />
+    </marker>
+    <marker id="arrow-store" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0284c7" />
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2.5" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <style>
+    .bg { fill: #f8fafc; }
+    .card-bg { fill: #ffffff; }
+    .title-main { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 16px; font-weight: 800; fill: #0f172a; letter-spacing: -0.2px; }
+    .title-sub { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 11px; font-weight: 500; fill: #64748b; }
+    .badge-pill { fill: #e0f2fe; stroke: #0284c7; stroke-width: 1; rx: 4px; }
+    .badge-text { font-family: 'Segoe UI', sans-serif; font-size: 10px; font-weight: 700; fill: #0369a1; text-anchor: middle; }
+
+    /* External Entity Styles */
+    .entity-box { fill: #ffffff; stroke: #1e293b; stroke-width: 1.8; filter: url(#shadow); }
+    .entity-title { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+    .entity-type { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 9.5px; font-weight: 600; fill: #64748b; text-anchor: middle; letter-spacing: 0.3px; }
+
+    /* Process Bubble Styles */
+    .process-box { fill: #ffffff; stroke: #0f172a; stroke-width: 2.2; rx: 12px; ry: 12px; filter: url(#shadow); }
+    .process-header-bg { fill: #f1f5f9; rx: 12px; ry: 12px; }
+    .process-divider { stroke: #0f172a; stroke-width: 2; }
+    .process-num { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 15px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+    .process-title { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 13.5px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+    .process-subtext { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 10px; font-weight: 500; fill: #475569; text-anchor: middle; }
+
+    /* Gane & Sarson Data Store Styles */
+    .store-bg { fill: #ffffff; }
+    .store-id-bg { fill: #f1f5f9; stroke: #1e293b; stroke-width: 1.8; }
+    .store-border-line { stroke: #1e293b; stroke-width: 1.8; stroke-linecap: square; }
+    .store-id { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 11.5px; font-weight: 800; fill: #0f172a; text-anchor: middle; }
+    .store-name { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 11px; font-weight: 700; fill: #1e293b; }
+    .store-table { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 9px; font-weight: 500; fill: #64748b; }
+
+    /* Flow Lines & Labels */
+    .flow-line { stroke: #1e293b; stroke-width: 1.5; fill: none; marker-end: url(#arrow); stroke-linejoin: round; stroke-linecap: round; }
+    .flow-store { stroke: #0284c7; stroke-width: 1.5; fill: none; marker-end: url(#arrow-store); stroke-linejoin: round; stroke-linecap: round; }
+    .flow-bg { fill: #ffffff; opacity: 0.92; }
+    .flow-label { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 10px; font-weight: 600; fill: #0f172a; }
+    .flow-id { font-weight: 800; fill: #2563eb; font-size: 9.5px; }
+    .flow-label-store { font-family: 'Segoe UI', -apple-system, system-ui, Roboto, sans-serif; font-size: 9.5px; font-weight: 600; fill: #0369a1; }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Outer Frame -->
+  <rect x="15" y="15" width="1010" height="670" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+
+  <!-- Header Banner -->
+  <g transform="translate(35, 42)">
+    <rect x="-8" y="-18" width="58" height="22" class="badge-pill" />
+    <text x="21" y="-3" class="badge-text">DFD 1.0</text>
+    <text x="65" y="-2" class="title-main">Process 7.0 — Administration & Maintenance</text>
+    <text x="65" y="14" class="title-sub">Capstone Project Management &amp; Monitoring Information System (CPMMIS) · Level 1 Decomposition · Gane & Sarson Notation</text>
+  </g>  <!-- ==================== PROCESS 7.0 ==================== -->
+  <g id="process-7.0">
+    <!-- Process Box Outer -->
+    <rect x="385" y="290" width="270" height="95" class="process-box" />
+    <!-- Top ID Compartment -->
+    <line x1="385" y1="320" x2="655" y2="320" class="process-divider" />
+    <text x="520" y="310" class="process-num">7.0</text>
+    <!-- Bottom Name Compartment -->
+    <text x="520" y="343" class="process-title">Administration & Maintenance</text>
+    <text x="520" y="362" class="process-subtext">Subprocesses 7.1 — 7.4</text>
+  </g>  <!-- Entity EE3: Administrator -->
+  <g id="entity-EE3">
+    <rect x="45" y="290" width="175" height="75" class="entity-box" />
+    <text x="132.5" y="324" class="entity-title">Administrator</text>
+    <text x="132.5" y="342" class="entity-type">External Actor</text>
+  </g>  <!-- Data Store DS_ALL: System Database -->
+  <g id="store-DS_ALL">
+    <rect x="790" y="290" width="220" height="75" class="store-bg" />
+    <!-- ID compartment -->
+    <rect x="790" y="290" width="46" height="75" class="store-id-bg" />
+    <!-- Top & Bottom Open-ended lines -->
+    <line x1="836" y1="290" x2="1010" y2="290" class="store-border-line" />
+    <line x1="836" y1="365" x2="1010" y2="365" class="store-border-line" />
+    <!-- Labels -->
+    <text x="813" y="331.5" class="store-id">DS_ALL</text>
+    <text x="846" y="309" class="store-name">System Database</text>
+    <text x="846" y="323" class="store-table">all 14 tables (SQL snapshot)</text>
+  </g>  <!-- Data Store DS1: User Accounts -->
+  <g id="store-DS1">
+    <rect x="240" y="90" width="230" height="42" class="store-bg" />
+    <!-- ID compartment -->
+    <rect x="240" y="90" width="46" height="42" class="store-id-bg" />
+    <!-- Top & Bottom Open-ended lines -->
+    <line x1="286" y1="90" x2="470" y2="90" class="store-border-line" />
+    <line x1="286" y1="132" x2="470" y2="132" class="store-border-line" />
+    <!-- Labels -->
+    <text x="263" y="115" class="store-id">DS1</text>
+    <text x="296" y="109" class="store-name">User Accounts</text>
+    <text x="296" y="123" class="store-table">manage advisers & groups</text>
+  </g>  <!-- Data Store DS10: Login Logs -->
+  <g id="store-DS10">
+    <rect x="570" y="90" width="230" height="42" class="store-bg" />
+    <!-- ID compartment -->
+    <rect x="570" y="90" width="46" height="42" class="store-id-bg" />
+    <!-- Top & Bottom Open-ended lines -->
+    <line x1="616" y1="90" x2="800" y2="90" class="store-border-line" />
+    <line x1="616" y1="132" x2="800" y2="132" class="store-border-line" />
+    <!-- Labels -->
+    <text x="593" y="115" class="store-id">DS10</text>
+    <text x="626" y="109" class="store-name">Login Logs</text>
+    <text x="626" y="123" class="store-table">truncate / audit purge</text>
+  </g>  <!-- Data Store DS11: Activity Logs -->
+  <g id="store-DS11">
+    <rect x="240" y="560" width="230" height="42" class="store-bg" />
+    <!-- ID compartment -->
+    <rect x="240" y="560" width="46" height="42" class="store-id-bg" />
+    <!-- Top & Bottom Open-ended lines -->
+    <line x1="286" y1="560" x2="470" y2="560" class="store-border-line" />
+    <line x1="286" y1="602" x2="470" y2="602" class="store-border-line" />
+    <!-- Labels -->
+    <text x="263" y="585" class="store-id">DS11</text>
+    <text x="296" y="579" class="store-name">Activity Logs</text>
+    <text x="296" y="593" class="store-table">truncate / audit purge</text>
+  </g>  <!-- Data Store DS14: Document Vault -->
+  <g id="store-DS14">
+    <rect x="570" y="560" width="230" height="42" class="store-bg" />
+    <!-- ID compartment -->
+    <rect x="570" y="560" width="46" height="42" class="store-id-bg" />
+    <!-- Top & Bottom Open-ended lines -->
+    <line x1="616" y1="560" x2="800" y2="560" class="store-border-line" />
+    <line x1="616" y1="602" x2="800" y2="602" class="store-border-line" />
+    <!-- Labels -->
+    <text x="593" y="585" class="store-id">DS14</text>
+    <text x="626" y="579" class="store-name">Document Vault</text>
+    <text x="626" y="593" class="store-table">orphan cleanup & backup</text>
+  </g>  <path d="M 220,310 L 385,310" class="flow-line" />
+  <rect x="227" y="291" width="316" height="16" class="flow-bg" rx="2" />
+  <text x="230" y="303" class="flow-label" text-anchor="start"><tspan class="flow-id">F33: </tspan>Account Governance, DB Backup & Purge Commands</text>  <path d="M 385,345 L 220,345" class="flow-line" />
+  <rect x="227" y="348" width="304" height="16" class="flow-bg" rx="2" />
+  <text x="230" y="360" class="flow-label" text-anchor="start"><tspan class="flow-id">F34: </tspan>Governance Confirmation, SQL/ZIP Backup File</text>  <path d="M 350,290 L 350,132" class="flow-store" />
+  <rect x="142" y="208" width="244" height="16" class="flow-bg" rx="2" />
+  <text x="145" y="220" class="flow-label-store" text-anchor="start">Add Adviser / Ban Group / Set Passwords</text>  <path d="M 630,290 L 630,132" class="flow-store" />
+  <rect x="632" y="208" width="208" height="16" class="flow-bg" rx="2" />
+  <text x="635" y="220" class="flow-label-store" text-anchor="start">Purge / Truncate Login Audit Logs</text>  <path d="M 410,385 L 410,560" class="flow-store" />
+  <rect x="152" y="468" width="280" height="16" class="flow-bg" rx="2" />
+  <text x="155" y="480" class="flow-label-store" text-anchor="start">Purge Activity Logs & Write Maintenance Audit</text>  <path d="M 630,385 L 630,560" class="flow-store" />
+  <rect x="632" y="468" width="262" height="16" class="flow-bg" rx="2" />
+  <text x="635" y="480" class="flow-label-store" text-anchor="start">Full ZIP Archive File Extraction & Cleanup</text>  <path d="M 655,310 L 790,310" class="flow-store" />
+  <rect x="662" y="291" width="202" height="16" class="flow-bg" rx="2" />
+  <text x="665" y="303" class="flow-label-store" text-anchor="start">OPTIMIZE TABLE & Stream SQL Dump</text>  <path d="M 790,345 L 655,345" class="flow-store" />
+  <rect x="662" y="348" width="220" height="16" class="flow-bg" rx="2" />
+  <text x="665" y="360" class="flow-label-store" text-anchor="start">Table Stats & Raw Table Data Stream</text></svg>

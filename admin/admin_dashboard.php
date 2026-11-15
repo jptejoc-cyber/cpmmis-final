@@ -80,12 +80,14 @@ $groups_q = mysqli_query($conn, "SELECT g.*, g.username as group_name, g.project
 // Pre-compute health status for all groups in a single query to avoid N+1
 $health_data = [];
 $groups_rows = [];
+$group_meta = [];
 if ($groups_q && mysqli_num_rows($groups_q) > 0) {
     mysqli_data_seek($groups_q, 0);
     $adv_ids = [];
     $group_ids = [];
     while ($g = mysqli_fetch_assoc($groups_q)) {
         $groups_rows[] = $g;
+        $group_meta[(int)$g['id']] = $g;
         if (!empty($g['adviser_id'])) $adv_ids[] = (int)$g['adviser_id'];
         $group_ids[] = (int)$g['id'];
     }
@@ -94,7 +96,7 @@ if ($groups_q && mysqli_num_rows($groups_q) > 0) {
         $grp_placeholders = implode(',', array_fill(0, count($group_ids), '?'));
         $tasks_map = [];
         $adv_types = str_repeat('i', count($adv_ids));
-        $stmt = $conn->prepare("SELECT id, adviser_id, deadline FROM adviser_tasks WHERE adviser_id IN ($adv_placeholders) AND task_type = 'chapter'");
+        $stmt = $conn->prepare("SELECT id, adviser_id, deadline, created_at FROM adviser_tasks WHERE adviser_id IN ($adv_placeholders) AND task_type = 'chapter'");
         $stmt->bind_param($adv_types, ...$adv_ids);
         $stmt->execute();
         $tasks_q = $stmt->get_result();
@@ -137,6 +139,7 @@ if ($groups_q && mysqli_num_rows($groups_q) > 0) {
                 $health_icon = 'fa-check-double';
             } else {
                 $adv_id = null;
+                $group_created_at = $group_meta[$gid]['created_at'] ?? null;
                 foreach ($groups_rows as $gr) {
                     if ((int)$gr['id'] === $gid) { $adv_id = (int)$gr['adviser_id']; break; }
                 }
@@ -144,6 +147,8 @@ if ($groups_q && mysqli_num_rows($groups_q) > 0) {
                     $current_worst = 0;
                     foreach ($tasks_map[$adv_id] as $t) {
                         if (empty($t['deadline'])) continue;
+                        // A task posted before the group existed cannot apply to it.
+                        if ($group_created_at && $t['created_at'] < $group_created_at) continue;
                         $deadline_time = strtotime($t['deadline']);
                         $diff_days = ($deadline_time - $now) / 86400;
                         if (!isset($subs_map[$gid][(int)$t['id']])) {
@@ -163,10 +168,13 @@ if ($groups_q && mysqli_num_rows($groups_q) > 0) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Master Command | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -255,6 +263,10 @@ if ($groups_q && mysqli_num_rows($groups_q) > 0) {
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -637,7 +649,7 @@ if ($groups_q && mysqli_num_rows($groups_q) > 0) {
                     maintainAspectRatio: false, 
                     scales: { 
                         y: { beginAtZero: true, max: 100, grid: { color: '#dadde1' }, ticks: { color: '#94a3b8', font: { weight: '800' } } }, 
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { weight: '800' } } } 
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { weight: '800' }, autoSkip: true, maxRotation: 45, minRotation: 0 } } 
                     },
                     plugins: {
                         legend: { labels: { color: '#1c1e21', font: { family: 'Plus Jakarta Sans', weight: '700' } } }

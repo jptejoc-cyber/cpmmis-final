@@ -95,37 +95,41 @@ try {
 
     $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
     $updated = false;
+    $reset_actor = null;
 
-    $stmt = $conn->prepare("SELECT id FROM `group` WHERE leader_email = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, username FROM `group` WHERE leader_email = ? LIMIT 1");
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
+    if ($account = $stmt->get_result()->fetch_assoc()) {
         $stmt = $conn->prepare("UPDATE `group` SET password = ? WHERE leader_email = ?");
         $stmt->bind_param("ss", $hashed_password, $email);
         $stmt->execute();
+        $reset_actor = ['id' => (int)$account['id'], 'role' => 'group', 'username' => $account['username'] ?? $email];
         $updated = true;
     }
 
     if (!$updated) {
-        $stmt = $conn->prepare("SELECT id FROM adviser WHERE email = ? LIMIT 1");
+        $stmt = $conn->prepare("SELECT id, username FROM adviser WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        if ($stmt->get_result()->num_rows > 0) {
+        if ($account = $stmt->get_result()->fetch_assoc()) {
             $stmt = $conn->prepare("UPDATE adviser SET password = ? WHERE email = ?");
             $stmt->bind_param("ss", $hashed_password, $email);
             $stmt->execute();
+            $reset_actor = ['id' => (int)$account['id'], 'role' => 'adviser', 'username' => $account['username'] ?? $email];
             $updated = true;
         }
     }
 
     if (!$updated) {
-        $stmt = $conn->prepare("SELECT id FROM admin WHERE email = ? LIMIT 1");
+        $stmt = $conn->prepare("SELECT id, username FROM admin WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        if ($stmt->get_result()->num_rows > 0) {
+        if ($account = $stmt->get_result()->fetch_assoc()) {
             $stmt = $conn->prepare("UPDATE admin SET password = ? WHERE email = ?");
             $stmt->bind_param("ss", $hashed_password, $email);
             $stmt->execute();
+            $reset_actor = ['id' => (int)$account['id'], 'role' => 'admin', 'username' => $account['username'] ?? $email];
             $updated = true;
         }
     }
@@ -153,6 +157,18 @@ try {
         }
 
         $conn->commit();
+
+        if ($reset_actor !== null) {
+            log_activity(
+                $conn,
+                $reset_actor['id'],
+                $reset_actor['role'],
+                $reset_actor['username'],
+                'Reset account password',
+                'Via email OTP'
+            );
+        }
+
         // Invalidate any existing session that may be tied to this device and
         // rotate the CSRF token so a pre-reset token cannot be replayed.
         if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user_id'])) {

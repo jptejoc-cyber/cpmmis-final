@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include('backend/session_init.php');
 
 include(__DIR__ . '/backend/db_config.php');
@@ -55,7 +55,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             overflow-x: hidden;
         }
 
-        /* ─── Ambient Glow (matches dashboard) ─── */
+        /* ΓöÇΓöÇΓöÇ Ambient Glow (matches dashboard) ΓöÇΓöÇΓöÇ */
         .ambient-glow {
             position: fixed;
             top: -10%;
@@ -79,7 +79,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             pointer-events: none;
         }
 
-        /* ─── Content Layer ─── */
+        /* ΓöÇΓöÇΓöÇ Content Layer ΓöÇΓöÇΓöÇ */
         .content-layer {
             position: relative;
             z-index: 1;
@@ -88,7 +88,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             flex-direction: column;
         }
 
-        /* ─── Top Nav ─── */
+        /* ΓöÇΓöÇΓöÇ Top Nav ΓöÇΓöÇΓöÇ */
         .top-nav {
             padding: 1.5rem 3rem;
             display: flex;
@@ -144,7 +144,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             to { transform: rotate(360deg); }
         }
 
-        /* ─── Hero Section ─── */
+        /* ΓöÇΓöÇΓöÇ Hero Section ΓöÇΓöÇΓöÇ */
         .hero-section {
             flex: 1;
             display: grid;
@@ -157,7 +157,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             gap: 4rem;
         }
 
-        /* ─── Left: Brand ─── */
+        /* ΓöÇΓöÇΓöÇ Left: Brand ΓöÇΓöÇΓöÇ */
         .hero-brand {
             display: flex;
             flex-direction: column;
@@ -252,7 +252,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             margin-top: 0.15rem;
         }
 
-        /* ─── Right: Login Card ─── */
+        /* ΓöÇΓöÇΓöÇ Right: Login Card ΓöÇΓöÇΓöÇ */
         .login-card {
             background: #ffffff;
             border: 1px solid #dadde1;
@@ -455,7 +455,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             letter-spacing: 0.1em;
         }
 
-        /* ─── Toast ─── */
+        /* ΓöÇΓöÇΓöÇ Toast ΓöÇΓöÇΓöÇ */
         #toast {
             position: fixed;
             top: 1.5rem;
@@ -471,7 +471,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ─── Modal ─── */
+        /* ΓöÇΓöÇΓöÇ Modal ΓöÇΓöÇΓöÇ */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -611,7 +611,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             font-weight: 700;
         }
 
-        /* ─── Footer ─── */
+        /* ΓöÇΓöÇΓöÇ Footer ΓöÇΓöÇΓöÇ */
         .footer {
             text-align: center;
             padding: 1.5rem 3rem;
@@ -621,12 +621,12 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
             letter-spacing: 0.05em;
         }
 
-        /* ─── Scrollbar ─── */
+        /* ΓöÇΓöÇΓöÇ Scrollbar ΓöÇΓöÇΓöÇ */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 3px; }
 
-        /* ─── Responsive ─── */
+        /* ΓöÇΓöÇΓöÇ Responsive ΓöÇΓöÇΓöÇ */
         @media (max-width: 968px) {
             .top-nav { padding: 1rem 1.5rem; }
             .hero-section {
@@ -691,7 +691,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
                     <span class="highlight">System</span>
                 </h1>
                 <p class="sub">
-                    A centralized platform for managing, tracking, and evaluating capstone research projects — empowering students, advisers, and administrators through digital transformation.
+                    A centralized platform for managing, tracking, and evaluating capstone research projects ΓÇö empowering students, advisers, and administrators through digital transformation.
                 </p>
                 <div class="quote">
                     "Excellence in Research through Information Systems"
@@ -762,7 +762,7 @@ if ($result) { $total_projects = (int)$result->fetch_assoc()['cnt']; }
         </section>
 
         <div class="footer">
-            &copy; 2026 Carlos Hilado Memorial State University — Fortune Towne &mdash; CPMMIS. All rights reserved.
+            &copy; 2026 Carlos Hilado Memorial State University ΓÇö Fortune Towne &mdash; CPMMIS. All rights reserved.
         </div>
     </div>
 

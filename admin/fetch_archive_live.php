@@ -77,22 +77,29 @@ if ($res->num_rows > 0) {
 
         echo '
         <tr id="row-' . $row_id . '" class="transition-all duration-300 border-b border-gray-200 ' . $highlight_class . '">
-            <td class="px-10 py-6">
+            <td class="px-4 sm:px-10 py-6">
                 <span class="font-extrabold text-slate-900 uppercase text-xs block mb-1">' . htmlspecialchars($row['title']) . '</span>
             </td>
             
-            <td class="px-10 py-6 text-center text-xs font-bold text-slate-600 uppercase">' . (!empty($row['adviser']) ? strtoupper(htmlspecialchars($row['adviser'])) : 'NO ADVISER ASSIGNED') . '</td>
+            <td class="px-4 sm:px-10 py-6 text-center text-xs font-bold text-slate-600 uppercase">' . (!empty($row['adviser']) ? strtoupper(htmlspecialchars($row['adviser'])) : 'NO ADVISER ASSIGNED') . '</td>
             
-            <td class="px-10 py-6 text-center text-xs font-bold text-slate-500">' . $displayYear . '</td>
+            <td class="px-4 sm:px-10 py-6 text-center text-xs font-bold text-slate-500">' . $displayYear . '</td>
             
-            <td class="px-10 py-6 text-center">
+            <td class="px-4 sm:px-10 py-6 text-center">
                 <span class="px-3 py-1.5 inline-block rounded-xl text-[8px] font-black uppercase tracking-wider ' . $catStyle . '">
                     ' . $catLabel . '
                 </span>
             </td>
             
-            <td class="px-10 py-6 text-center">
+            <td class="px-4 sm:px-10 py-6 text-center">
                 <div class="inline-flex items-center justify-center gap-3">
+                    <button onclick="openArchiveContents(' . $row_id . ', this.dataset.title)"
+                            data-title="' . htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8') . '"
+                            class="w-10 h-10 inline-flex items-center justify-center bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl transition shadow-sm"
+                            title="View PDF Chapters">
+                        <i class="fas fa-eye text-xs"></i>
+                    </button>
+
                     <a href="' . $filePath . '" 
                        download="' . htmlspecialchars($row['title']) . '" 
                        class="w-10 h-10 inline-flex items-center justify-center bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl transition shadow-sm"
@@ -110,6 +117,6 @@ if ($res->num_rows > 0) {
         </tr>';
     }
 } else {
-    echo '<tr><td colspan="5" class="px-10 py-20 text-center text-slate-500 uppercase text-[10px] font-black italic tracking-widest">No matching assets logged in terminal node.</td></tr>';
+    echo '<tr><td colspan="5" class="px-4 sm:px-10 py-20 text-center text-slate-500 uppercase text-[10px] font-black italic tracking-widest">No matching assets logged in terminal node.</td></tr>';
 }
 ?>

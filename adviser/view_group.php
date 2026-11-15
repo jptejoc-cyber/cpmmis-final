@@ -50,40 +50,9 @@ $completed_count = count(array_filter($chapters, fn($s) => $s === 'Completed'));
 $percent = $completed_count * 20;
 $all_chapters_complete = ($completed_count === 5); // Final Project unlocks when all 5 chapters approved
 
-// Compute Health Status dynamically (mirrors adviser_dashboard.php)
-$health_status = 'on_track';
-$tasks_q = secure_query($conn, "SELECT id, deadline FROM adviser_tasks WHERE adviser_id = ? AND task_type = 'chapter'", [$adviser_id], "i");
-if ($tasks_q && mysqli_num_rows($tasks_q) > 0) {
-    $now = time();
-    while ($t = mysqli_fetch_assoc($tasks_q)) {
-        $task_id = $t['id'];
-        if (empty($t['deadline'])) continue;
-        
-        $deadline_time = strtotime($t['deadline']);
-        $diff_days = ($deadline_time - $now) / 86400;
-
-        $sub_q = secure_query($conn, "SELECT id FROM group_submissions WHERE task_id = ? AND group_id = ?", [$task_id, $group_id], "ii");
-        $has_submitted = ($sub_q && mysqli_num_rows($sub_q) > 0);
-
-        if (!$has_submitted) {
-            if ($diff_days < 0) {
-                $health_status = 'at_risk';
-                break; // Worst status wins
-            } elseif ($diff_days <= 3) {
-                if ($health_status !== 'at_risk') {
-                    $health_status = 'needs_attention';
-                }
-            }
-        }
-    }
-}
-
-// A group with ALL FIVE chapters (1-5) approved is fully complete, overriding task health.
-$fin_q = secure_query($conn, "SELECT COUNT(DISTINCT chapter_number) AS c FROM group_submissions WHERE group_id = ? AND status = 'approved' AND chapter_number BETWEEN 1 AND 5", [$group_id], "i");
-$fin_row = $fin_q ? mysqli_fetch_assoc($fin_q) : null;
-if ($fin_row && (int)$fin_row['c'] >= 5) {
-    $health_status = 'completed';
-}
+// Compute Health Status dynamically
+$health = calculate_group_health($conn, $group_id);
+$health_status = $health['status'];
 
 /**
  * 2. Data Fetching
@@ -107,7 +76,7 @@ $unread_count = mysqli_fetch_assoc($unread_q)['unread'] ?? 0;
     <style>html, body { background-color: #F0F2F5 !important; color-scheme: light; }</style>
     <title>Review: <?php echo htmlspecialchars($group['username']); ?> | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#F0F2F5">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -211,6 +180,12 @@ $unread_count = mysqli_fetch_assoc($unread_q)['unread'] ?? 0;
         th { font-size: 9px !important; letter-spacing: 0.1em; }
         td { padding: 1rem 0.75rem !important; }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex" style="background-color: #F0F2F5; color-scheme: light;">
 
@@ -225,10 +200,10 @@ $unread_count = mysqli_fetch_assoc($unread_q)['unread'] ?? 0;
 
     
 
-    <main class="flex-1 w-full max-w-7xl mx-auto p-8 lg:p-12 space-y-10">
+    <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8 lg:p-12 space-y-6 sm:space-y-10">
         
-        <nav class="premium-card rounded-[2.5rem] px-8 py-4 flex justify-between items-center shadow-2xl relative z-[100]">
-            <div>
+        <nav class="premium-card rounded-[2.5rem] px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl relative z-[100]">
+            <div class="min-w-0 w-full sm:w-auto">
                 <a href="adviser_dashboard.php" class="text-[9px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-600 transition block mb-1">
                     <i class="fas fa-arrow-left mr-1"></i> BACK TO ADVISER DASHBOARD
                 </a>
@@ -241,7 +216,7 @@ $unread_count = mysqli_fetch_assoc($unread_q)['unread'] ?? 0;
                         if ($health_status === 'completed') {
                             $hs_label = 'Completed'; $hs_icon = 'fa-check-double'; $hs_color = 'blue';
                         } elseif ($health_status === 'need_attention' || $health_status === 'needs_attention' || $health_status === 'need attention') {
-                            $hs_label = 'Need Attention'; $hs_icon = 'fa-exclamation-triangle'; $hs_color = 'amber';
+                            $hs_label = 'Needs Attention'; $hs_icon = 'fa-exclamation-triangle'; $hs_color = 'amber';
                         } elseif ($health_status === 'at_risk' || $health_status === 'at risk') {
                             $hs_label = 'At Risk'; $hs_icon = 'fa-times-circle'; $hs_color = 'rose';
                         }
@@ -254,8 +229,8 @@ $unread_count = mysqli_fetch_assoc($unread_q)['unread'] ?? 0;
                 <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider line-clamp-1 max-w-xl mt-0.5"><?php echo htmlspecialchars($group['project_title'] ?: 'UNTITLED RESEARCH SPACE'); ?></p>
             </div>
             
-            <div class="flex items-center gap-4">
-                <div class="bg-slate-100 rounded-2xl px-5 py-2.5 flex items-center shadow-sm border border-gray-200 gap-4">
+            <div class="flex flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                <div class="bg-slate-100 rounded-2xl px-4 sm:px-5 py-2.5 flex items-center shadow-sm border border-gray-200 gap-4 shrink-0">
                     <div class="text-right">
                         <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">COMPLETION RATE</p>
                         <p class="text-lg font-black text-slate-900 leading-none"><?php echo $percent; ?>%</p>
@@ -879,7 +854,7 @@ $unread_count = mysqli_fetch_assoc($unread_q)['unread'] ?? 0;
                             if (status === 'completed') {
                                 label = 'Completed'; icon = 'fa-check-double'; color = 'blue';
                             } else if (status === 'needs_attention') {
-                                label = 'Need Attention'; icon = 'fa-exclamation-triangle'; color = 'amber';
+                                label = 'Needs Attention'; icon = 'fa-exclamation-triangle'; color = 'amber';
                             } else if (status === 'at_risk') {
                                 label = 'At Risk'; icon = 'fa-times-circle'; color = 'rose';
                             }

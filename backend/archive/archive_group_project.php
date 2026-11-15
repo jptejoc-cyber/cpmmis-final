@@ -143,6 +143,15 @@ $ins->execute();
 $archive_id = $conn->insert_id;
 $ins->close();
 
+log_activity(
+    $conn,
+    (int)$_SESSION['user_id'],
+    'admin',
+    $_SESSION['username'] ?? '',
+    'Archived capstone project',
+    $raw_title . ' (' . $group['username'] . ', ' . $category . ')'
+);
+
 // --- Broadcast notification (mirrors upload_archive.php) ---
 $notif_msg = "Capstone Archive Added: " . $title;
 $broadcast_sql = "

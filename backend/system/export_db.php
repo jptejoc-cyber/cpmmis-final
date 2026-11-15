@@ -85,6 +85,15 @@ $backup_content .= "COMMIT;\n";
 // 3. COMPOSE SYSTEM HTTP DOWNLOAD HEADERS
 $filename = "cpmmis_backup_" . date('Ymd_His') . ".sql";
 
+log_activity(
+    $conn,
+    (int)$_SESSION['user_id'],
+    'admin',
+    $_SESSION['username'] ?? '',
+    'Exported database',
+    $filename
+);
+
 header('Content-Type: application/octet-stream');
 header("Content-Transfer-Encoding: Binary");
 header("Content-disposition: attachment; filename=\"" . $filename . "\"");

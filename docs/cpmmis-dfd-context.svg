@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1050" viewBox="0 0 1800 1050" role="img" aria-labelledby="dfdTitle dfdDesc">
+  <title id="dfdTitle">CPMMIS Context Diagram — Gane and Sarson notation</title>
+  <desc id="dfdDesc">Level 0 data flow diagram showing the CPMMIS system as process 0 with four external entities: Research Group, Adviser, Administrator, and Email Service.</desc>
+
+  <defs>
+    <filter id="entityShadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="4" dy="5" stdDeviation="3.5" flood-color="#0F172A" flood-opacity="0.16"/>
+    </filter>
+    <filter id="processShadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1E3A8A" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#334155"/>
+    </marker>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E2E8F0" stroke-width="0.6" opacity="0.45"/>
+    </pattern>
+    <style>
+      .sans { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+      .flow-label { font-size: 10.5px; font-weight: 600; fill: #1E293B; paint-order: stroke; stroke: #FFFFFF; stroke-width: 3.5px; stroke-linejoin: round; }
+      .flow-line { fill: none; stroke: #334155; stroke-width: 2.2; stroke-linecap: round; }
+      .entity-name { font-size: 18px; font-weight: 800; fill: #78350F; letter-spacing: 0.2px; }
+      .entity-role { font-size: 11px; font-weight: 600; fill: #92400E; }
+      .entity-id { font-size: 9px; font-weight: 700; fill: #B45309; letter-spacing: 1.2px; }
+      .flow-id-bg { fill: #1D4ED8; }
+      .flow-id-text { font-size: 9px; font-weight: 800; fill: #FFFFFF; letter-spacing: 0.7px; }
+    </style>
+  </defs>
+
+  <!-- Canvas -->
+  <rect width="1800" height="1050" fill="#FFFFFF"/>
+  <rect width="1800" height="1050" fill="url(#grid)"/>
+  <rect x="0" y="0" width="1800" height="7" fill="#1D4ED8"/>
+  <rect x="0" y="7" width="1800" height="3" fill="#F59E0B"/>
+  <rect x="24" y="24" width="1752" height="1002" rx="18" fill="none" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- Header -->
+  <text x="70" y="74" class="sans" font-size="32" font-weight="800" fill="#0F172A" letter-spacing="-0.6">CPMMIS Context Diagram</text>
+  <text x="70" y="104" class="sans" font-size="13.5" font-weight="700" fill="#1D4ED8" letter-spacing="0.4">LEVEL 0 DFD  ·  GANE &amp; SARSON NOTATION</text>
+  <text x="70" y="127" class="sans" font-size="12.5" font-weight="500" fill="#64748B">Capstone Project Management &amp; Monitoring Information System</text>
+
+  <!-- Gane & Sarson legend -->
+  <rect x="1355" y="44" width="375" height="212" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2"/>
+  <text x="1380" y="70" class="sans" font-size="10" font-weight="800" fill="#475569" letter-spacing="1.5">GANE &amp; SARSON KEY</text>
+  <line x1="1380" y1="82" x2="1705" y2="82" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- Legend row 1: process -->
+  <rect x="1380" y="96" width="48" height="26" rx="7" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="1.6"/>
+  <text x="1404" y="113" class="sans" font-size="11" font-weight="800" fill="#1E3A8A" text-anchor="middle">0</text>
+  <text x="1444" y="107" class="sans" font-size="11.5" font-weight="700" fill="#1E293B">Process</text>
+  <text x="1444" y="121" class="sans" font-size="9" font-weight="500" fill="#64748B">Rounded rectangle with process ID</text>
+
+  <!-- Legend row 2: external entity -->
+  <rect x="1380" y="136" width="48" height="26" fill="#FFFBEB" stroke="#B45309" stroke-width="1.6"/>
+  <text x="1444" y="147" class="sans" font-size="11.5" font-weight="700" fill="#1E293B">External entity</text>
+  <text x="1444" y="161" class="sans" font-size="9" font-weight="500" fill="#64748B">Square with shadow</text>
+
+  <!-- Legend row 3: data flow -->
+  <line x1="1380" y1="188" x2="1428" y2="188" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="1444" y="192" class="sans" font-size="11.5" font-weight="700" fill="#1E293B">Data flow</text>
+  <text x="1444" y="206" class="sans" font-size="9" font-weight="500" fill="#64748B">Labeled arrow · D# = flow ID</text>
+
+  <!-- Legend row 4: data store -->
+  <path d="M 1380 218 H 1428 M 1380 242 H 1428 M 1380 218 V 242 M 1395 218 V 242" fill="none" stroke="#475569" stroke-width="1.6"/>
+  <text x="1444" y="228" class="sans" font-size="11.5" font-weight="700" fill="#1E293B">Data store</text>
+  <text x="1444" y="242" class="sans" font-size="9" font-weight="500" fill="#64748B">Not shown at Level 0</text>
+
+  <!-- External entities -->
+  <!-- EE1: Research Group -->
+  <rect x="70" y="425" width="300" height="190" fill="#FFFBEB" stroke="#B45309" stroke-width="2.4" filter="url(#entityShadow)"/>
+  <text x="88" y="449" class="sans entity-id">EE1</text>
+  <text x="220" y="507" class="sans entity-name" text-anchor="middle">RESEARCH GROUP</text>
+  <text x="220" y="531" class="sans entity-role" text-anchor="middle">Student / Group Leader</text>
+
+  <!-- EE2: Adviser -->
+  <rect x="760" y="90" width="280" height="140" fill="#FFFBEB" stroke="#B45309" stroke-width="2.4" filter="url(#entityShadow)"/>
+  <text x="778" y="114" class="sans entity-id">EE2</text>
+  <text x="900" y="152" class="sans entity-name" text-anchor="middle">ADVISER</text>
+  <text x="900" y="176" class="sans entity-role" text-anchor="middle">Faculty Adviser</text>
+
+  <!-- EE3: Administrator -->
+  <rect x="1430" y="425" width="300" height="190" fill="#FFFBEB" stroke="#B45309" stroke-width="2.4" filter="url(#entityShadow)"/>
+  <text x="1448" y="449" class="sans entity-id">EE3</text>
+  <text x="1580" y="507" class="sans entity-name" text-anchor="middle">ADMINISTRATOR</text>
+  <text x="1580" y="531" class="sans entity-role" text-anchor="middle">System Administrator</text>
+
+  <!-- EE4: Email Service -->
+  <rect x="740" y="830" width="320" height="140" fill="#FFFBEB" stroke="#B45309" stroke-width="2.4" filter="url(#entityShadow)"/>
+  <text x="758" y="854" class="sans entity-id">EE4</text>
+  <text x="900" y="887" class="sans entity-name" text-anchor="middle">EMAIL SERVICE</text>
+  <text x="900" y="911" class="sans entity-role" text-anchor="middle">Gmail SMTP Relay</text>
+
+  <!-- Process 0 -->
+  <rect x="640" y="390" width="520" height="270" rx="30" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="3" filter="url(#processShadow)"/>
+  <line x1="640" y1="438" x2="1160" y2="438" stroke="#1D4ED8" stroke-width="1.4" opacity="0.45"/>
+  <text x="672" y="423" class="sans" font-size="22" font-weight="800" fill="#1E3A8A">0</text>
+  <text x="1128" y="420" class="sans" font-size="10" font-weight="800" fill="#1D4ED8" text-anchor="end" letter-spacing="1.8">CONTEXT PROCESS</text>
+
+  <text x="900" y="521" class="sans" font-size="38" font-weight="800" fill="#0F172A" text-anchor="middle" letter-spacing="-0.5">CPMMIS</text>
+  <text x="900" y="558" class="sans" font-size="17.5" font-weight="600" fill="#1E3A8A" text-anchor="middle">Capstone Project Management &amp;</text>
+  <text x="900" y="582" class="sans" font-size="17.5" font-weight="600" fill="#1E3A8A" text-anchor="middle">Monitoring Information System</text>
+  <line x1="760" y1="604" x2="1040" y2="604" stroke="#93C5FD" stroke-width="1.2"/>
+  <text x="900" y="630" class="sans" font-size="10.5" font-weight="500" fill="#475569" text-anchor="middle">Single process representing the complete system</text>
+
+  <!-- Data flows -->
+  <!-- Group to system -->
+  <path d="M 370 475 H 640" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="505" y="393" class="sans flow-label" text-anchor="middle">
+    <tspan x="505" dy="0">Registration &amp; login details</tspan>
+    <tspan x="505" dy="15">Adviser request</tspan>
+    <tspan x="505" dy="15">Task submissions · Meeting requests</tspan>
+    <tspan x="505" dy="15">Chat messages</tspan>
+    <tspan x="505" dy="15">OTP &amp; archive queries</tspan>
+  </text>
+  <g>
+    <rect x="479" y="356" width="52" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="505" y="368.5" class="sans flow-id-text" text-anchor="middle">D1 + D2</text>
+  </g>
+
+  <!-- System to group -->
+  <path d="M 640 565 H 370" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="505" y="590" class="sans flow-label" text-anchor="middle">
+    <tspan x="505" dy="0">Approval &amp; account status</tspan>
+    <tspan x="505" dy="15">Assigned tasks &amp; deadlines</tspan>
+    <tspan x="505" dy="15">Review results &amp; feedback</tspan>
+    <tspan x="505" dy="15">Admin letters · Meeting updates</tspan>
+    <tspan x="505" dy="15">Notifications · Chat · Archive records</tspan>
+  </text>
+  <g>
+    <rect x="479" y="665" width="52" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="505" y="677.5" class="sans flow-id-text" text-anchor="middle">D3 + D4</text>
+  </g>
+
+  <!-- Adviser to system -->
+  <path d="M 820 230 V 390" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="800" y="270" class="sans flow-label" text-anchor="end">
+    <tspan x="800" dy="0">Login &amp; OTP details</tspan>
+    <tspan x="800" dy="15">Request decision (accept/decline)</tspan>
+    <tspan x="800" dy="15">Task &amp; deadline definition</tspan>
+    <tspan x="800" dy="15">Review decision &amp; feedback</tspan>
+    <tspan x="800" dy="15">Meeting decision · Chat</tspan>
+  </text>
+  <g>
+    <rect x="834" y="246" width="26" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="847" y="258.5" class="sans flow-id-text" text-anchor="middle">D5</text>
+  </g>
+
+  <!-- System to adviser -->
+  <path d="M 980 390 V 230" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="1000" y="270" class="sans flow-label" text-anchor="start">
+    <tspan x="1000" dy="0">Advisee requests</tspan>
+    <tspan x="1000" dy="15">Assigned groups &amp; progress</tspan>
+    <tspan x="1000" dy="15">Student submissions</tspan>
+    <tspan x="1000" dy="15">Meeting requests</tspan>
+    <tspan x="1000" dy="15">Notifications · Reminders · Chat</tspan>
+  </text>
+  <g>
+    <rect x="1000" y="342" width="26" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="1013" y="354.5" class="sans flow-id-text" text-anchor="middle">D6</text>
+  </g>
+
+  <!-- Administrator to system -->
+  <path d="M 1430 475 H 1160" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="1295" y="393" class="sans flow-label" text-anchor="middle">
+    <tspan x="1295" dy="0">Login &amp; OTP details</tspan>
+    <tspan x="1295" dy="15">Adviser account data</tspan>
+    <tspan x="1295" dy="15">Group approval / ban / delete</tspan>
+    <tspan x="1295" dy="15">Letters &amp; archive records</tspan>
+    <tspan x="1295" dy="15">Backup/export commands · Chat</tspan>
+  </text>
+  <g>
+    <rect x="1269" y="356" width="52" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="1295" y="368.5" class="sans flow-id-text" text-anchor="middle">D7</text>
+  </g>
+
+  <!-- System to administrator -->
+  <path d="M 1160 565 H 1430" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="1295" y="590" class="sans flow-label" text-anchor="middle">
+    <tspan x="1295" dy="0">Registration &amp; system alerts</tspan>
+    <tspan x="1295" dy="15">Oversight lists</tspan>
+    <tspan x="1295" dy="15">Reports &amp; analytics</tspan>
+    <tspan x="1295" dy="15">Activity &amp; login logs</tspan>
+    <tspan x="1295" dy="15">Backup files · Chat · Notifications</tspan>
+  </text>
+  <g>
+    <rect x="1269" y="665" width="52" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="1295" y="677.5" class="sans flow-id-text" text-anchor="middle">D8</text>
+  </g>
+
+  <!-- System to email service -->
+  <path d="M 820 660 V 830" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="800" y="725" class="sans flow-label" text-anchor="end">
+    <tspan x="800" dy="0">OTP delivery request</tspan>
+    <tspan x="800" dy="15">Recipient email · Reset code</tspan>
+  </text>
+  <g>
+    <rect x="834" y="700" width="26" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="847" y="712.5" class="sans flow-id-text" text-anchor="middle">D9</text>
+  </g>
+
+  <!-- Email service to system -->
+  <path d="M 980 830 V 660" class="flow-line" marker-end="url(#arrow)"/>
+  <text x="1000" y="725" class="sans flow-label" text-anchor="start">
+    <tspan x="1000" dy="0">SMTP delivery status</tspan>
+    <tspan x="1000" dy="15">Success / failure response</tspan>
+  </text>
+  <g>
+    <rect x="1000" y="758" width="26" height="17" rx="8.5" class="flow-id-bg"/>
+    <text x="1013" y="770.5" class="sans flow-id-text" text-anchor="middle">D10</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="70" y1="1006" x2="1730" y2="1006" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="70" y="1028" class="sans" font-size="9.5" font-weight="500" fill="#64748B">Level 0 context diagram — internal stores and lower-level processes are omitted; flow IDs D1–D10 map to the data dictionary in the accompanying documentation.</text>
+  <text x="1730" y="1028" class="sans" font-size="9.5" font-weight="700" fill="#94A3B8" text-anchor="end">CPMMIS  ·  GANE &amp; SARSON</text>
+</svg>

@@ -45,6 +45,9 @@ if (!$meeting_data) {
 }
 
 $group_id = $meeting_data['gid'];
+$meeting_when = !empty($meeting_data['meeting_time'])
+    ? date('M d, Y g:i A', strtotime($meeting_data['meeting_time']))
+    : 'schedule not set';
 
 if ($action === 'approve') {
     $stmt = $conn->prepare("UPDATE meeting_requests SET status = 'accepted' WHERE id = ?");
@@ -55,6 +58,15 @@ if ($action === 'approve') {
         $stmt2 = $conn->prepare("INSERT INTO notifications (user_id, user_role, message, reference_id) VALUES (?, 'group', ?, ?)");
         $stmt2->bind_param("isi", $group_id, $msg, $meeting_id);
         $stmt2->execute();
+
+        log_activity(
+            $conn,
+            $adviser_id,
+            'adviser',
+            $_SESSION['username'] ?? '',
+            'Accepted consultation',
+            $meeting_data['username'] . ' · ' . $meeting_when
+        );
 
         header("Location: ../../adviser/view_group.php?id=$group_id&approved=1");
         exit();
@@ -76,6 +88,19 @@ if ($action === 'decline' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt2 = $conn->prepare("INSERT INTO notifications (user_id, user_role, message, reference_id) VALUES (?, 'group', ?, ?)");
         $stmt2->bind_param("isi", $group_id, $notif_msg, $meeting_id);
         $stmt2->execute();
+
+        $decline_details = $meeting_data['username'] . ' · ' . $meeting_when;
+        if ($reason !== '') {
+            $decline_details .= ' · Reason: ' . $reason;
+        }
+        log_activity(
+            $conn,
+            $adviser_id,
+            'adviser',
+            $_SESSION['username'] ?? '',
+            'Declined consultation',
+            $decline_details
+        );
 
         header("Location: ../../adviser/view_group.php?id=$group_id&declined=1");
         exit();

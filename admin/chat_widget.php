@@ -154,11 +154,28 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
                 }
             }
 
+            function getMessageKey(msg) {
+                if (msg.id !== undefined && msg.id !== null && msg.id !== '') return String(msg.id);
+                if (msg._pendingId) return String(msg._pendingId);
+                return String(msg.created_at || '') + '|' + String(msg.message || '');
+            }
+
             function renderMessages(messages, pendingIds) {
                 const feed = document.getElementById('admin-chat-bar-messages');
                 if (!feed) return;
-                const wasAtBottom = feed.scrollHeight - feed.clientHeight <= feed.scrollTop + 100;
+
+                // Polling used to rebuild the whole feed every 3 seconds. That replayed
+                // the entrance animation on every bubble and could force the feed back
+                // to the bottom while the user was reading older messages.
+                const signature = messages.map(getMessageKey).join('|') + '::' + (pendingIds || []).join('|');
+                if (feed.dataset.renderSignature === signature) return;
+
+                const previousKeys = new Set(Array.from(feed.querySelectorAll('[data-msg-id]')).map(el => el.getAttribute('data-msg-id')));
+                const firstRender = !feed.dataset.renderSignature;
+                const wasAtBottom = feed.scrollHeight - feed.clientHeight <= feed.scrollTop + 40;
+                const previousScrollTop = feed.scrollTop;
                 let html = "";
+
                 messages.forEach(msg => {
                     const isMe = (msg.sender_role === 'admin');
                     const bubbleClass = isMe ? "bg-blue-600 text-white rounded-tr-none ml-auto" : "bg-slate-100 text-slate-700 rounded-tl-none mr-auto border border-gray-200";
@@ -172,9 +189,11 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
                         return `${dateStr}, ${timeStr}`;
                     };
                     const time = formatMsgDate(msg.created_at);
+                    const messageKey = getMessageKey(msg);
                     const isPending = pendingIds && pendingIds.includes(msg._pendingId);
                     const pendingDot = isPending ? ' <span class="text-amber-400" title="Sending..."><i class="fas fa-clock text-[7px]"></i></span>' : '';
-                    html += `<div class="flex ${isMe ? 'justify-end' : 'justify-start'} w-full animate-scale-in">
+                    const animateIn = !firstRender && !previousKeys.has(messageKey);
+                    html += `<div data-msg-id="${escapeHtml(messageKey)}" class="flex ${isMe ? 'justify-end' : 'justify-start'} w-full${animateIn ? ' animate-scale-in' : ''}">
                         <div class="max-w-[75%] p-3 rounded-xl shadow-md ${bubbleClass} text-[11px] font-bold leading-relaxed break-words">
                             <p>${escapeHtml(msg.message)}${pendingDot}</p>
                             <span class="block text-[9px] ${timeClass} mt-1.5 text-right uppercase font-black tracking-wider">${time}</span>
@@ -183,8 +202,13 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
                 });
                 if (html === "") html = `<div class="text-center text-slate-500 text-[8px] py-10 font-bold uppercase italic tracking-wider">No messages yet.</div>`;
                 feed.innerHTML = html;
+                feed.dataset.renderSignature = signature;
                 advFeedLoaded = true;
-                if (wasAtBottom || feed.scrollTop === 0) feed.scrollTop = feed.scrollHeight;
+
+                // Follow new messages only when the reader is already at the bottom.
+                // Otherwise keep their current reading position.
+                if (wasAtBottom || firstRender) feed.scrollTop = feed.scrollHeight;
+                else feed.scrollTop = previousScrollTop;
             }
 
             function sendHeartbeat() {
@@ -298,6 +322,11 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
                 advActiveId = id;
                 advActiveName = name;
                 advFeedLoaded = false;
+                const feed = document.getElementById('admin-chat-bar-messages');
+                if (feed) {
+                    feed.innerHTML = '';
+                    delete feed.dataset.renderSignature;
+                }
 
                 closeDropdown();
 
@@ -350,6 +379,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
                     } else {
                         const feed = document.getElementById('admin-chat-bar-messages');
                         feed.innerHTML = '<div class="text-center text-rose-400 text-[8px] py-10 font-bold uppercase italic tracking-wider">Error: ' + escapeHtml(data.message || 'unknown') + '</div>';
+                        delete feed.dataset.renderSignature;
                     }
                 })
                 .catch(err => {
@@ -358,7 +388,9 @@ if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin') {
                     if (cached.length > 0) {
                         renderMessages(cached.concat(pendingMsgs), pendingIds);
                     } else if (!advFeedLoaded) {
-                        document.getElementById('admin-chat-bar-messages').innerHTML = '<div class="text-center text-rose-400 text-[8px] py-10 font-bold uppercase italic tracking-wider">Connection error</div>';
+                        const feed = document.getElementById('admin-chat-bar-messages');
+                        feed.innerHTML = '<div class="text-center text-rose-400 text-[8px] py-10 font-bold uppercase italic tracking-wider">Connection error</div>';
+                        delete feed.dataset.renderSignature;
                     }
                 });
             }

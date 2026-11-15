@@ -62,10 +62,13 @@ $letters_count = mysqli_num_rows($letters_q);
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Letters | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="color-scheme" content="light">
     <style>html{background:#F0F2F5;color-scheme:light}</style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -126,6 +129,10 @@ $letters_count = mysqli_num_rows($letters_q);
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -182,12 +189,12 @@ $letters_count = mysqli_num_rows($letters_q);
     <main class="flex-1 ml-0 md:ml-24 p-6 sm:p-8 lg:p-12 space-y-6 sm:space-y-10 relative z-10">
         
         <nav class="premium-card rounded-[2.5rem] px-4 sm:px-8 py-4 flex flex-wrap justify-between items-center gap-2 shadow-2xl relative z-[100]">
-            <div class="flex items-center gap-6 min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-3 sm:gap-6 min-w-0 flex-1">
                 <div>
                     <h2 class="text-lg font-black text-slate-900 uppercase tracking-tight leading-none truncate">Admin Letters</h2>
                     <p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mt-1">Official Correspondence</p>
                 </div>
-                <div class="h-10 w-[1px] bg-slate-100 mx-2"></div>
+                <div class="hidden sm:block h-10 w-[1px] bg-slate-100 mx-2"></div>
                 <div class="flex items-center gap-2">
                     <span class="px-3 py-1 bg-blue-500/10 text-blue-400 text-[9px] font-black uppercase rounded-full border border-blue-500/20">
                         <i class="fas fa-file me-1"></i> <?php echo $letters_count; ?> letter<?php echo $letters_count !== 1 ? 's' : ''; ?>

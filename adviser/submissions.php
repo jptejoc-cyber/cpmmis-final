@@ -55,12 +55,15 @@ if (isset($_SESSION['success'])) {
 <!DOCTYPE html>
 <html lang="en" style="background-color: #F0F2F5; color-scheme: light;">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light">
     <style>html, body { background-color: #F0F2F5 !important; color-scheme: light; }</style>
     <title>Tasks & Submissions | Adviser</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="theme-color" content="#F0F2F5">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -148,6 +151,10 @@ if (isset($_SESSION['success'])) {
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex" style="background-color: #F0F2F5; color-scheme: light;">
 

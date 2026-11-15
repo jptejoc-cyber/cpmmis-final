@@ -77,6 +77,15 @@ while ($row = mysqli_fetch_row($tables_q)) {
 $sql_dump .= "SET FOREIGN_KEY_CHECKS=1;\n";
 $sql_dump .= "COMMIT;\n";
 
+log_activity(
+    $conn,
+    (int)$_SESSION['user_id'],
+    'admin',
+    $_SESSION['username'] ?? '',
+    'Downloaded database backup',
+    $sql_filename
+);
+
 // --- PROGRAMMATIC BROWSER STREAM DOWNLOAD TRIGGER ---
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');

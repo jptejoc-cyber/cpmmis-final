@@ -62,6 +62,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'upload') {
             $stmt->bind_param("sssss", $title, $adviser, $year, $new_file_name, $category);
 
             if ($stmt->execute()) {
+                log_activity(
+                    $conn,
+                    (int)$_SESSION['user_id'],
+                    'admin',
+                    $_SESSION['username'] ?? '',
+                    'Uploaded archive',
+                    "'$title' ($year, $category)"
+                );
                 header("Location: ../../admin/archive.php?tab=$category&status=success");
                 exit();
             } else {
@@ -79,7 +87,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upload') {
 if (isset($_POST['delete_id']) && isset($_POST['csrf_token']) && verify_csrf_token($_POST['csrf_token'])) {
     $id = (int)$_POST['delete_id'];
 
-    $stmt = $conn->prepare("SELECT file_path FROM capstone_archive WHERE id = ?");
+    $stmt = $conn->prepare("SELECT title, file_path FROM capstone_archive WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $data = $stmt->get_result()->fetch_assoc();
@@ -94,6 +102,15 @@ if (isset($_POST['delete_id']) && isset($_POST['csrf_token']) && verify_csrf_tok
     $stmt = $conn->prepare("DELETE FROM capstone_archive WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
+
+    log_activity(
+        $conn,
+        (int)$_SESSION['user_id'],
+        'admin',
+        $_SESSION['username'] ?? '',
+        'Deleted archive',
+        $data['title'] ?? ('archive ID ' . $id)
+    );
     header("Location: ../../admin/archive.php?status=deleted");
     exit();
 }

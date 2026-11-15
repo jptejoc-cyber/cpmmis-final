@@ -56,7 +56,7 @@ $logins_q = mysqli_query($conn, "SELECT * FROM login_logs WHERE user_id = " . (i
 if ($group_status === 'active' || $group_status === 'approved' || $group_status === 'accepted') {
     $g_adviser = $group_data['adviser_id'];
     if ($g_adviser) {
-        $tasks_check = mysqli_query($conn, "SELECT id, deadline, chapter_number FROM adviser_tasks WHERE adviser_id = " . (int)$g_adviser . " AND task_type = 'chapter'");
+        $tasks_check = mysqli_query($conn, "SELECT id, deadline, chapter_number FROM adviser_tasks WHERE adviser_id = " . (int)$g_adviser . " AND task_type = 'chapter' AND created_at >= '" . mysqli_real_escape_string($conn, $group_data['created_at']) . "'");
         if ($tasks_check && mysqli_num_rows($tasks_check) > 0) {
             $now = time();
             while($tc = mysqli_fetch_assoc($tasks_check)) {
@@ -101,9 +101,13 @@ if ($group_status === 'pending'):
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Pending Access | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="color-scheme" content="light">
     <style>html{background:#F0F2F5;color-scheme:light}</style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -118,9 +122,12 @@ if ($group_status === 'pending'):
             color: #1c1e21; 
         }
     </style>
+
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
-    <div class="bg-slate-100 border border-gray-200 backdrop-blur-3xl p-12 rounded-[3rem] shadow-2xl text-center max-w-md w-full relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-slate-100 border border-gray-200 backdrop-blur-3xl p-8 sm:p-12 rounded-[3rem] shadow-2xl text-center max-w-md w-full relative overflow-hidden">
         <div class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div class="w-20 h-20 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6"><i class="fas fa-clock"></i></div>
         <h1 class="text-xl font-black uppercase text-slate-900 tracking-tight">Account Registration Pending</h1>
@@ -156,10 +163,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <title>Consultations | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <meta name="color-scheme" content="light">
     <style>html{background:#F0F2F5;color-scheme:light}</style>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -257,6 +267,10 @@ document.addEventListener("DOMContentLoaded", function() {
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -478,7 +492,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </nav>
         </div>
 
-                <section class="premium-card rounded-[3.5rem] p-10 shadow-2xl border border-gray-200 relative overflow-hidden relative z-10 mb-8 flex justify-between items-center">
+                <section class="premium-card rounded-[3.5rem] p-10 shadow-2xl border border-gray-200 relative overflow-hidden relative z-10 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
             <div class="relative z-10">
                 <span class="text-[9px] font-black text-blue-400 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full uppercase tracking-widest">Consultations</span>
@@ -488,11 +502,11 @@ document.addEventListener("DOMContentLoaded", function() {
             
             <div class="relative z-10">
                 <?php if(!empty($group_data['adviser_id'])): ?>
-                    <button onclick="openMeetingModal()" class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-3">
+                    <button onclick="openMeetingModal()" class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 sm:px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3 w-full sm:w-auto">
                         <i class="fas fa-calendar-plus text-sm"></i> Request Consultation
                     </button>
                 <?php else: ?>
-                    <button disabled class="bg-slate-100 border border-gray-200 text-slate-500 px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest cursor-not-allowed flex items-center gap-3">
+                    <button disabled class="bg-slate-100 border border-gray-200 text-slate-500 px-6 sm:px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-3 w-full sm:w-auto">
                         <i class="fas fa-ban text-sm"></i> No Adviser Assigned
                     </button>
                 <?php endif; ?>

@@ -92,12 +92,14 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <meta charset="UTF-8">
     <title>Archive Vault | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -188,6 +190,10 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -350,27 +356,27 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
         </div>
 
         <div class="sticky top-0 z-50 -mx-4 px-4 py-3 bg-gradient-to-b from-[#F0F2F5] via-[#F0F2F5]/90 to-transparent backdrop-blur-md">
-            <nav class="premium-card rounded-[2.5rem] px-8 py-4 flex flex-wrap justify-between items-center shadow-2xl gap-4 bg-white border border-gray-200">
-                <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-gray-200">
-                    <button onclick="filterTab('all')" id="tab-all" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition active text-white bg-gradient-to-r from-blue-600 to-blue-500">All</button>
-                    <button onclick="filterTab('best')" id="tab-best" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600">🏆 Best</button>
-                    <button onclick="filterTab('regular')" id="tab-regular" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600">Standard</button>
+            <nav class="premium-card rounded-[2.5rem] px-4 sm:px-8 py-4 flex flex-wrap justify-between items-center shadow-2xl gap-4 bg-white border border-gray-200">
+                <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-gray-200 w-full sm:w-auto overflow-x-auto">
+                    <button onclick="filterTab('all')" id="tab-all" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition active text-white bg-gradient-to-r from-blue-600 to-blue-500 whitespace-nowrap">All</button>
+                    <button onclick="filterTab('best')" id="tab-best" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap">🏆 Best</button>
+                    <button onclick="filterTab('regular')" id="tab-regular" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap">Standard</button>
                 </div>
                 
-                <div class="flex items-center gap-3 flex-1 justify-center max-w-2xl">
-                    <div class="relative flex-1 group min-w-[200px]">
+                <div class="flex flex-wrap items-center gap-3 flex-1 justify-center max-w-2xl w-full sm:w-auto">
+                    <div class="relative flex-1 group min-w-0 w-full sm:w-auto sm:min-w-[200px]">
                         <input type="text" id="live_search" oninput="fetchData()" placeholder="SEARCH VAULT..." class="w-full bg-slate-100 border border-gray-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase text-slate-900 outline-none focus:border-blue-500/50 shadow-inner">
                         <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                     </div>
 
-                    <select id="year_filter" onchange="fetchData()" class="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer focus:border-blue-500/50 shadow-inner">
+                    <select id="year_filter" onchange="fetchData()" class="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer focus:border-blue-500/50 shadow-inner">
                         <option value="all" class="bg-white text-slate-900 font-bold uppercase">All Years</option>
                         <?php mysqli_data_seek($years_query, 0); while($yr = mysqli_fetch_assoc($years_query)): ?>
                             <option value="<?php echo $yr['year']; ?>" class="bg-white text-slate-900 font-bold uppercase"><?php echo $yr['year']; ?></option>
                         <?php endwhile; ?>
                     </select>
 
-                    <select id="adviser_filter" onchange="fetchData()" class="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer max-w-[150px] focus:border-blue-500/50 shadow-inner">
+                    <select id="adviser_filter" onchange="fetchData()" class="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer max-w-none sm:max-w-[150px] focus:border-blue-500/50 shadow-inner">
                         <option value="all" class="bg-white text-slate-900 font-bold uppercase">All Advisers</option>
                         <?php foreach($registered_advisers as $adv_name): ?>
                             <option value="<?php echo htmlspecialchars($adv_name); ?>" class="bg-white text-slate-900 font-bold uppercase"><?php echo htmlspecialchars(strtoupper($adv_name)); ?></option>
@@ -378,7 +384,7 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
                     </select>
                 </div>
 
-                <button onclick="openUploadModal()" class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg flex items-center gap-2">
+                <button onclick="openUploadModal()" class="w-full sm:w-auto justify-center bg-gradient-to-r from-blue-600 to-blue-500 text-white px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg flex items-center gap-2">
                     <i class="fas fa-plus"></i> New Entry
                 </button>
             </nav>
@@ -388,7 +394,7 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
             <div class="p-4 sm:p-8 lg:p-10 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center bg-slate-100">
                 <div><h3 class="text-lg font-black uppercase text-slate-900 tracking-tight">Project Directory</h3><p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mt-1">Purged & Protected Capstone Archives</p></div>
             </div>
-            <div>
+            <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left">
                     <thead class="bg-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-500 border-b border-gray-200">
                         <tr>
@@ -495,6 +501,25 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
         </div>
     </div>
 
+    <div id="archive-contents-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-[540] items-center justify-center p-4" onclick="if(event.target===this)closeArchiveContents()">
+        <div id="archive-contents-panel" role="dialog" aria-modal="true" aria-labelledby="archive-contents-title" class="w-full max-w-md max-h-[80vh] bg-white rounded-[2rem] border border-gray-200 shadow-2xl overflow-hidden flex flex-col transform transition-all scale-95 opacity-0">
+            <div class="p-5 bg-slate-100 border-b border-gray-200 flex items-start justify-between gap-4">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center shrink-0"><i class="fas fa-file-pdf text-sm"></i></div>
+                    <div class="min-w-0">
+                        <p class="text-[8px] font-black uppercase tracking-widest text-blue-500">Archive Contents</p>
+                        <h3 id="archive-contents-title" class="text-sm font-black uppercase text-slate-900 tracking-tight leading-tight break-words">Project PDFs</h3>
+                    </div>
+                </div>
+                <button onclick="closeArchiveContents()" class="w-8 h-8 rounded-xl bg-white text-slate-500 hover:text-red-500 transition shrink-0" aria-label="Close archive contents"><i class="fas fa-times text-xs"></i></button>
+            </div>
+            <div id="archive-contents-list" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2 min-h-[140px]"></div>
+            <div class="px-5 py-3 border-t border-gray-200 bg-white">
+                <p class="text-[8px] font-bold uppercase tracking-widest text-slate-400 text-center">Select a PDF to open the viewer</p>
+            </div>
+        </div>
+    </div>
+
     <div id="upload-modal" class="fixed inset-0 hidden z-[500] items-center justify-center p-4">
         <div class="w-full max-w-[450px] rounded-[2.5rem] shadow-2xl overflow-hidden transform transition-all scale-95 opacity-0" id="upload-content">
             <div class="p-6 bg-slate-100 border-b border-gray-200 flex justify-between items-center">
@@ -571,10 +596,10 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
         function filterTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = 'tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600';
+                btn.className = 'tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap';
             });
             const activeBtn = document.getElementById('tab-' + tab);
-            activeBtn.className = 'tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active';
+            activeBtn.className = 'tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active whitespace-nowrap';
             fetchData();
         }
 
@@ -622,6 +647,136 @@ while($adv = mysqli_fetch_assoc($advisers_list_query)) { $registered_advisers[] 
         function closePasswordModal() { document.getElementById('password-modal').classList.replace('flex', 'hidden'); }
         function openProfileModal() { animateIn('profile-modal', 'profile-content'); }
         function closeProfileModal() { document.getElementById('profile-modal').classList.replace('flex', 'hidden'); }
+
+        let archiveContentsId = null;
+        let archiveContentsKind = '';
+
+        function archiveContentsMessage(message, isError = false) {
+            const list = document.getElementById('archive-contents-list');
+            list.innerHTML = '';
+            const box = document.createElement('div');
+            box.className = 'flex flex-col items-center justify-center text-center py-10 px-4';
+            const icon = document.createElement('i');
+            icon.className = (isError ? 'fas fa-exclamation-circle text-rose-400' : 'fas fa-file-pdf text-slate-400') + ' text-2xl mb-3';
+            const text = document.createElement('p');
+            text.className = 'text-[9px] font-black uppercase tracking-widest leading-relaxed ' + (isError ? 'text-rose-500' : 'text-slate-500');
+            text.textContent = message;
+            box.append(icon, text);
+            list.appendChild(box);
+        }
+
+        function formatArchiveFileSize(bytes) {
+            const size = Number(bytes) || 0;
+            if (size <= 0) return 'PDF';
+            if (size < 1024) return size + ' B';
+            if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
+            return (size / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function openArchiveContents(id, title) {
+            archiveContentsId = id;
+            archiveContentsKind = '';
+            const modal = document.getElementById('archive-contents-modal');
+            const panel = document.getElementById('archive-contents-panel');
+            document.getElementById('archive-contents-title').textContent = title || 'Project PDFs';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.getElementById('archive-contents-list').innerHTML = '<div class="flex items-center justify-center gap-3 py-10 text-slate-500"><i class="fas fa-circle-notch fa-spin text-blue-500"></i><span class="text-[9px] font-black uppercase tracking-widest">Loading PDF files...</span></div>';
+
+            fetch('../backend/archive/list_archive_pdfs.php?id=' + encodeURIComponent(id), { headers: { 'Accept': 'application/json' } })
+                .then(res => res.json().then(data => ({ ok: res.ok, data })))
+                .then(result => {
+                    if (!result.ok || !result.data || result.data.status !== 'success') {
+                        throw new Error((result.data && result.data.message) || 'Unable to load archive contents.');
+                    }
+                    const data = result.data;
+                    archiveContentsKind = data.kind;
+                    const list = document.getElementById('archive-contents-list');
+                    list.innerHTML = '';
+
+                    if (!data.entries || data.entries.length === 0) {
+                        archiveContentsMessage(data.message || 'No PDF documents were found inside this archive.');
+                        return;
+                    }
+
+                    data.entries.forEach(entry => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition text-left group';
+
+                        const iconWrap = document.createElement('div');
+                        iconWrap.className = 'w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0';
+                        const icon = document.createElement('i');
+                        icon.className = 'fas fa-file-pdf text-sm';
+                        iconWrap.appendChild(icon);
+
+                        const textWrap = document.createElement('div');
+                        textWrap.className = 'min-w-0 flex-1';
+                        const label = document.createElement('p');
+                        label.className = 'text-[10px] font-black uppercase tracking-tight text-slate-900 truncate';
+                        label.textContent = entry.label || entry.name || 'PDF Document';
+                        const sub = document.createElement('p');
+                        sub.className = 'text-[8px] font-bold uppercase tracking-wider text-slate-500 truncate mt-0.5';
+                        sub.textContent = data.kind === 'pdf' ? 'Single PDF file' : (entry.name || 'PDF document');
+                        textWrap.append(label, sub);
+
+                        const size = document.createElement('span');
+                        size.className = 'text-[8px] font-black uppercase tracking-wider text-slate-400 shrink-0';
+                        size.textContent = formatArchiveFileSize(entry.size);
+
+                        const chevron = document.createElement('i');
+                        chevron.className = 'fas fa-chevron-right text-[9px] text-slate-400 group-hover:text-blue-500 transition shrink-0';
+
+                        btn.append(iconWrap, textWrap, size, chevron);
+                        btn.addEventListener('click', () => openArchivePdf(entry));
+                        list.appendChild(btn);
+                    });
+
+                    if (data.truncated) {
+                        const note = document.createElement('p');
+                        note.className = 'text-center text-[8px] font-bold uppercase tracking-widest text-amber-500 px-3 pt-2';
+                        note.textContent = 'Showing the first 200 PDF files.';
+                        list.appendChild(note);
+                    }
+                })
+                .catch(err => archiveContentsMessage(err.message || 'Unable to load archive contents.', true));
+        }
+
+        function openArchivePdf(entry) {
+            if (!archiveContentsId) return;
+            const params = new URLSearchParams({ id: String(archiveContentsId) });
+            if (archiveContentsKind === 'zip' && entry.entry !== null && entry.entry !== undefined) {
+                params.set('entry', String(entry.entry));
+            }
+            const url = '../backend/archive/view_archive_pdf.php?' + params.toString();
+            const popup = window.open(url, 'cpmmisArchivePdfViewer', 'popup=yes,width=1100,height=850,resizable=yes,scrollbars=yes');
+            if (!popup) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            } else {
+                popup.focus();
+            }
+        }
+
+        function closeArchiveContents() {
+            const modal = document.getElementById('archive-contents-modal');
+            const panel = document.getElementById('archive-contents-panel');
+            panel.classList.add('scale-95', 'opacity-0');
+            panel.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.replace('flex', 'hidden');
+                document.getElementById('archive-contents-list').innerHTML = '';
+            }, 180);
+        }
 
         function confirmDelete(rowId) {
             globalDeletionTargetEntryId = rowId;

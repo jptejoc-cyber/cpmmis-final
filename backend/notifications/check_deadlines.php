@@ -1,7 +1,8 @@
 <?php
 if (isset($conn) && $conn) {
-    $check_q = "SELECT id, adviser_id, caption, deadline FROM adviser_tasks 
-                WHERE deadline_notified = 0 
+    $check_q = "SELECT id, adviser_id, caption, deadline, created_at FROM adviser_tasks 
+                WHERE task_type = 'chapter'
+                AND deadline_notified = 0 
                 AND deadline IS NOT NULL 
                 AND deadline > '1970-01-01 00:00:00'
                 AND deadline > NOW() 
@@ -13,20 +14,30 @@ if (isset($conn) && $conn) {
             $task_id = $task['id'];
             $adv_id = $task['adviser_id'];
             $caption = $task['caption'];
+            $task_created_at = $task['created_at'];
 
             $due_date = date('M d, Y g:i A', strtotime($task['deadline']));
             $msg = "Urgent: The deadline for '$caption' is approaching on $due_date.";
 
-            $stmt = $conn->prepare("SELECT id FROM `group` WHERE adviser_id = ? AND status = 'active'");
-            $stmt->bind_param("i", $adv_id);
+            // Only groups that existed when the task was posted can be
+            // responsible for it, and groups that already submitted the task
+            // must not receive a "3 days remaining" notice.
+            $stmt = $conn->prepare("SELECT id FROM `group` WHERE adviser_id = ? AND status = 'active' AND created_at <= ?");
+            $stmt->bind_param("is", $adv_id, $task_created_at);
             $stmt->execute();
             $groups = $stmt->get_result();
             if ($groups && $groups->num_rows > 0) {
                 while ($g = $groups->fetch_assoc()) {
-                    $gid = $g['id'];
-                    $stmt2 = $conn->prepare("INSERT INTO notifications (user_id, user_role, message) VALUES (?, 'group', ?)");
-                    $stmt2->bind_param("is", $gid, $msg);
+                    $gid = (int)$g['id'];
+                    $stmt2 = $conn->prepare("SELECT id FROM group_submissions WHERE group_id = ? AND task_id = ?");
+                    $stmt2->bind_param("ii", $gid, $task_id);
                     $stmt2->execute();
+                    if ($stmt2->get_result()->num_rows > 0) {
+                        continue;
+                    }
+                    $stmt3 = $conn->prepare("INSERT INTO notifications (user_id, user_role, message) VALUES (?, 'group', ?)");
+                    $stmt3->bind_param("is", $gid, $msg);
+                    $stmt3->execute();
                 }
             }
 
@@ -36,8 +47,9 @@ if (isset($conn) && $conn) {
         }
     }
 
-    $overdue_q = "SELECT id, adviser_id, caption, deadline FROM adviser_tasks 
-                  WHERE overdue_notified = 0 
+    $overdue_q = "SELECT id, adviser_id, caption, deadline, created_at FROM adviser_tasks 
+                  WHERE task_type = 'chapter'
+                  AND overdue_notified = 0 
                   AND deadline IS NOT NULL 
                   AND deadline > '1970-01-01 00:00:00'
                   AND deadline < NOW()";
@@ -48,11 +60,12 @@ if (isset($conn) && $conn) {
             $task_id = $task['id'];
             $adv_id = $task['adviser_id'];
             $caption = $task['caption'];
+            $task_created_at = $task['created_at'];
 
             $msg = "At Risk: You missed the deadline for '$caption'. Please submit immediately.";
 
-            $stmt = $conn->prepare("SELECT id FROM `group` WHERE adviser_id = ? AND status = 'active'");
-            $stmt->bind_param("i", $adv_id);
+            $stmt = $conn->prepare("SELECT id FROM `group` WHERE adviser_id = ? AND status = 'active' AND created_at <= ?");
+            $stmt->bind_param("is", $adv_id, $task_created_at);
             $stmt->execute();
             $groups = $stmt->get_result();
             if ($groups && $groups->num_rows > 0) {

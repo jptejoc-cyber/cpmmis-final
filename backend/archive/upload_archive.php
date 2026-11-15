@@ -116,6 +116,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['role'] === 'admin') {
         
         if ($stmt->execute()) {
             $archive_id = $conn->insert_id;
+            log_activity(
+                $conn,
+                (int)$_SESSION['user_id'],
+                'admin',
+                $_SESSION['username'] ?? '',
+                'Uploaded archive',
+                "'$title' ($year, $category)"
+            );
             
             // --- AUTOMATED GLOBAL NOTIFICATION BROADCAST ---
             $notif_msg = "Capstone Archive Added: " . $title;

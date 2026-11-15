@@ -5,8 +5,11 @@ include('../backend/db_config.php');
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <title>Authentication Pending | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
     <meta name="color-scheme" content="light">
@@ -40,8 +43,12 @@ include('../backend/db_config.php');
             100% { box-shadow: 0 0 0 0 rgba(66, 103, 178, 0); }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
-<body class="bg-mesh min-h-screen flex items-center justify-center p-6 overflow-hidden">
+<body class="bg-mesh min-h-screen flex items-center justify-center p-4 sm:p-6">
 
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
         <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-600 rounded-full blur-[120px]"></div>

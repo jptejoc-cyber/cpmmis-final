@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1160" viewBox="0 0 1760 1160" role="img" aria-labelledby="ganttTitle ganttDesc">
+<title id="ganttTitle">CPMMIS Project Development Gantt Chart</title>
+<desc id="ganttDesc">Seven-phase SDLC schedule for the Capstone Project Management and Monitoring Information System, March 2 to November 27, 2026.</desc>
+<defs>
+  <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="112%">
+    <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.10" />
+  </filter>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <rect width="7" height="7" fill="#fee2e2" />
+    <line x1="0" y1="0" x2="0" y2="7" stroke="#ef4444" stroke-width="2.2" />
+  </pattern>
+  <style>
+    .title { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 21px; font-weight: 700; fill: #0f172a; letter-spacing: -0.2px; }
+    .subtitle { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 10.8px; font-weight: 500; fill: #64748b; }
+    .legend { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.8px; font-weight: 600; fill: #475569; }
+    .th { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.8px; font-weight: 700; fill: #64748b; letter-spacing: 0.9px; }
+    .month { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 10.4px; font-weight: 700; fill: #334155; }
+    .phase-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 11.4px; font-weight: 800; fill: #0f172a; letter-spacing: 0.35px; }
+    .phase-date { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.4px; font-weight: 600; fill: #64748b; }
+    .task { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 10.7px; font-weight: 500; fill: #1e293b; }
+    .task-num { font-weight: 700; fill: #94a3b8; }
+    .assignee { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.5px; font-weight: 500; fill: #475569; }
+    .pct { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.4px; font-weight: 700; fill: #047857; }
+    .pct-open { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.8px; font-weight: 700; fill: #b91c1c; }
+    .inprogress { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.5px; font-weight: 700; fill: #991b1b; }
+    .today-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.6px; font-weight: 700; fill: #ffffff; letter-spacing: 0.5px; }
+    .note { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.6px; font-weight: 500; fill: #64748b; }
+    .source { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8px; font-weight: 400; fill: #94a3b8; }
+  </style>
+</defs>
+<rect width="1760" height="1160" fill="#eef2f7" />
+<rect x="20" y="20" width="1720" height="1120" rx="14" fill="#ffffff" stroke="#dbe3ec" stroke-width="1.2" filter="url(#cardShadow)" />
+<text x="48" y="54" class="title">CPMMIS — Project Development Gantt Chart</text>
+<text x="48" y="78" class="subtitle">Capstone Project Management &amp; Monitoring Information System  ·  7-phase SDLC  ·  March 2 – November 27, 2026  ·  Data date: November 14, 2026</text>
+<rect x="1118" y="62.5" width="14" height="11" rx="2" fill="#2563eb" />
+<text x="1138" y="71" class="legend">Complete</text>
+<rect x="1228" y="62.5" width="14" height="11" rx="2" fill="url(#hatch)" stroke="#dc2626" stroke-width="0.9" />
+<text x="1248" y="71" class="legend">In progress</text>
+<rect x="1348" y="63.5" width="14" height="9" rx="2" fill="#334155" />
+<text x="1368" y="71" class="legend">Phase summary</text>
+<line x1="1502" y1="68" x2="1524" y2="68" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="5 4" opacity="0.85" />
+<text x="1530" y="71" class="legend">Today (Nov 14)</text>
+<rect x="528" y="112" width="1160" height="40" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+<text x="60" y="133" class="th">ACTIVITY / PHASE</text>
+<text x="336" y="133" class="th">ASSIGNED TO</text>
+<text x="498" y="133" class="th" text-anchor="middle">PROGRESS</text>
+<text x="592.21" y="135" class="month" text-anchor="middle">March</text>
+<text x="720.62" y="135" class="month" text-anchor="middle">April</text>
+<line x1="656.41" y1="112" x2="656.41" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="851.17" y="135" class="month" text-anchor="middle">May</text>
+<line x1="784.83" y1="112" x2="784.83" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="981.73" y="135" class="month" text-anchor="middle">June</text>
+<line x1="917.52" y1="112" x2="917.52" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="1112.28" y="135" class="month" text-anchor="middle">July</text>
+<line x1="1045.93" y1="112" x2="1045.93" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="1244.97" y="135" class="month" text-anchor="middle">August</text>
+<line x1="1178.63" y1="112" x2="1178.63" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="1375.53" y="135" class="month" text-anchor="middle">September</text>
+<line x1="1311.32" y1="112" x2="1311.32" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="1506.08" y="135" class="month" text-anchor="middle">October</text>
+<line x1="1439.73" y1="112" x2="1439.73" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<text x="1630.21" y="135" class="month" text-anchor="middle">November</text>
+<line x1="1572.43" y1="112" x2="1572.43" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<line x1="528" y1="146" x2="528" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="557.96" y1="146" x2="557.96" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="587.93" y1="146" x2="587.93" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="617.89" y1="146" x2="617.89" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="647.85" y1="146" x2="647.85" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="677.82" y1="146" x2="677.82" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="707.78" y1="146" x2="707.78" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="737.74" y1="146" x2="737.74" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="767.7" y1="146" x2="767.7" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="797.67" y1="146" x2="797.67" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="827.63" y1="146" x2="827.63" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="857.59" y1="146" x2="857.59" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="887.56" y1="146" x2="887.56" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="917.52" y1="146" x2="917.52" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="947.48" y1="146" x2="947.48" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="977.45" y1="146" x2="977.45" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1007.41" y1="146" x2="1007.41" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1037.37" y1="146" x2="1037.37" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1067.34" y1="146" x2="1067.34" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1097.3" y1="146" x2="1097.3" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1127.26" y1="146" x2="1127.26" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1157.23" y1="146" x2="1157.23" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1187.19" y1="146" x2="1187.19" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1217.15" y1="146" x2="1217.15" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1247.11" y1="146" x2="1247.11" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1277.08" y1="146" x2="1277.08" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1307.04" y1="146" x2="1307.04" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1337" y1="146" x2="1337" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1366.97" y1="146" x2="1366.97" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1396.93" y1="146" x2="1396.93" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1426.89" y1="146" x2="1426.89" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1456.86" y1="146" x2="1456.86" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1486.82" y1="146" x2="1486.82" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1516.78" y1="146" x2="1516.78" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1546.75" y1="146" x2="1546.75" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1576.71" y1="146" x2="1576.71" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1606.67" y1="146" x2="1606.67" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1636.63" y1="146" x2="1636.63" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="1666.6" y1="146" x2="1666.6" y2="151" stroke="#cbd5e1" stroke-width="1" />
+<line x1="328" y1="112" x2="328" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<line x1="468" y1="112" x2="468" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<line x1="528" y1="112" x2="528" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<line x1="1688" y1="112" x2="1688" y2="1070" stroke="#e2e8f0" stroke-width="1" />
+<line x1="48" y1="152" x2="1688" y2="152" stroke="#94a3b8" stroke-width="1.1" />
+<rect x="48" y="152" width="1640" height="27" fill="#0ea5e9" fill-opacity="0.09" />
+<rect x="48" y="152" width="3" height="27" fill="#0ea5e9" />
+<text x="60" y="165.5" class="phase-label" dominant-baseline="central">1. PLAN</text>
+<text x="460" y="165.5" class="phase-date" text-anchor="end" dominant-baseline="central">Mar 2 – Mar 17</text>
+<text x="498" y="165.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="528" y="161" width="68.49" height="9" rx="2" fill="#334155" />
+<rect x="528" y="170" width="2" height="4" fill="#334155" />
+<rect x="594.49" y="170" width="2" height="4" fill="#334155" />
+<line x1="48" y1="179" x2="1688" y2="179" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="192.5" class="task" dominant-baseline="central"><tspan class="task-num">1.1</tspan>  Document Analysis</text>
+<text x="336" y="192.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="192.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="532.28" y="186" width="12.84" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="206" x2="1688" y2="206" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="219.5" class="task" dominant-baseline="central"><tspan class="task-num">1.2</tspan>  Data Gathering</text>
+<text x="336" y="219.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="219.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="545.12" y="213" width="12.84" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="233" x2="1688" y2="233" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="246.5" class="task" dominant-baseline="central"><tspan class="task-num">1.3</tspan>  Process Analysis</text>
+<text x="336" y="246.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="246.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="557.96" y="240" width="8.56" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="260" x2="1688" y2="260" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="273.5" class="task" dominant-baseline="central"><tspan class="task-num">1.4</tspan>  Conduct of RRL</text>
+<text x="336" y="273.5" class="assignee" dominant-baseline="central">Janealyn Perez</text>
+<text x="498" y="273.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="566.52" y="267" width="12.84" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="287" x2="1688" y2="287" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="300.5" class="task" dominant-baseline="central"><tspan class="task-num">1.5</tspan>  Study Objectives</text>
+<text x="336" y="300.5" class="assignee" dominant-baseline="central">Trisha Angeli Antoniano</text>
+<text x="498" y="300.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="579.37" y="294" width="5" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="314" x2="1688" y2="314" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="327.5" class="task" dominant-baseline="central"><tspan class="task-num">1.6</tspan>  Scope &amp; Delimitation</text>
+<text x="336" y="327.5" class="assignee" dominant-baseline="central">Janealyn Perez</text>
+<text x="498" y="327.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="583.65" y="321" width="5" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="341" x2="1688" y2="341" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="354.5" class="task" dominant-baseline="central"><tspan class="task-num">1.7</tspan>  Gantt Preparation</text>
+<text x="336" y="354.5" class="assignee" dominant-baseline="central">Trisha Angeli Antoniano</text>
+<text x="498" y="354.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="587.93" y="348" width="5" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="368" x2="1688" y2="368" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="381.5" class="task" dominant-baseline="central"><tspan class="task-num">1.8</tspan>  Feasibility Study</text>
+<text x="336" y="381.5" class="assignee" dominant-baseline="central">Trisha Angeli Antoniano</text>
+<text x="498" y="381.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="592.21" y="375" width="5" height="13" rx="3.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="0.8" />
+<line x1="48" y1="395" x2="1688" y2="395" stroke="#f1f5f9" stroke-width="1" />
+<rect x="48" y="395" width="1640" height="27" fill="#7c3aed" fill-opacity="0.09" />
+<rect x="48" y="395" width="3" height="27" fill="#7c3aed" />
+<text x="60" y="408.5" class="phase-label" dominant-baseline="central">2. DESIGN</text>
+<text x="460" y="408.5" class="phase-date" text-anchor="end" dominant-baseline="central">Mar 18 – Mar 28</text>
+<text x="498" y="408.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="596.49" y="404" width="47.08" height="9" rx="2" fill="#334155" />
+<rect x="596.49" y="413" width="2" height="4" fill="#334155" />
+<rect x="641.57" y="413" width="2" height="4" fill="#334155" />
+<line x1="48" y1="422" x2="1688" y2="422" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="435.5" class="task" dominant-baseline="central"><tspan class="task-num">2.1</tspan>  SDLC Model</text>
+<text x="336" y="435.5" class="assignee" dominant-baseline="central">Kartein Alicarte</text>
+<text x="498" y="435.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="600.77" y="429" width="8.56" height="13" rx="3.5" fill="#7c3aed" stroke="#5b21b6" stroke-width="0.8" />
+<line x1="48" y1="449" x2="1688" y2="449" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="462.5" class="task" dominant-baseline="central"><tspan class="task-num">2.2</tspan>  System Architecture</text>
+<text x="336" y="462.5" class="assignee" dominant-baseline="central">Kartein Alicarte</text>
+<text x="498" y="462.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="609.33" y="456" width="8.56" height="13" rx="3.5" fill="#7c3aed" stroke="#5b21b6" stroke-width="0.8" />
+<line x1="48" y1="476" x2="1688" y2="476" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="489.5" class="task" dominant-baseline="central"><tspan class="task-num">2.3</tspan>  ERD Design</text>
+<text x="336" y="489.5" class="assignee" dominant-baseline="central">Kartein Alicarte</text>
+<text x="498" y="489.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="617.89" y="483" width="8.56" height="13" rx="3.5" fill="#7c3aed" stroke="#5b21b6" stroke-width="0.8" />
+<line x1="48" y1="503" x2="1688" y2="503" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="516.5" class="task" dominant-baseline="central"><tspan class="task-num">2.4</tspan>  DFD Modeling</text>
+<text x="336" y="516.5" class="assignee" dominant-baseline="central">Kartein Alicarte</text>
+<text x="498" y="516.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="626.45" y="510" width="8.56" height="13" rx="3.5" fill="#7c3aed" stroke="#5b21b6" stroke-width="0.8" />
+<line x1="48" y1="530" x2="1688" y2="530" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="543.5" class="task" dominant-baseline="central"><tspan class="task-num">2.5</tspan>  UI Design</text>
+<text x="336" y="543.5" class="assignee" dominant-baseline="central">Kartein Alicarte</text>
+<text x="498" y="543.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="635.01" y="537" width="8.56" height="13" rx="3.5" fill="#7c3aed" stroke="#5b21b6" stroke-width="0.8" />
+<line x1="48" y1="557" x2="1688" y2="557" stroke="#f1f5f9" stroke-width="1" />
+<rect x="48" y="557" width="1640" height="27" fill="#2563eb" fill-opacity="0.09" />
+<rect x="48" y="557" width="3" height="27" fill="#2563eb" />
+<text x="60" y="570.5" class="phase-label" dominant-baseline="central">3. DEVELOP</text>
+<text x="460" y="570.5" class="phase-date" text-anchor="end" dominant-baseline="central">Mar 29 – Apr 24</text>
+<text x="498" y="570.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="643.57" y="566" width="115.57" height="9" rx="2" fill="#334155" />
+<rect x="643.57" y="575" width="2" height="4" fill="#334155" />
+<rect x="757.14" y="575" width="2" height="4" fill="#334155" />
+<line x1="48" y1="584" x2="1688" y2="584" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="597.5" class="task" dominant-baseline="central"><tspan class="task-num">3.1</tspan>  Front-End Development</text>
+<text x="336" y="597.5" class="assignee" dominant-baseline="central">Andrew Estrella</text>
+<text x="498" y="597.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="647.85" y="591" width="25.68" height="13" rx="3.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.8" />
+<line x1="48" y1="611" x2="1688" y2="611" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="624.5" class="task" dominant-baseline="central"><tspan class="task-num">3.2</tspan>  Back-End Development</text>
+<text x="336" y="624.5" class="assignee" dominant-baseline="central">Andrew Estrella</text>
+<text x="498" y="624.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="673.54" y="618" width="34.24" height="13" rx="3.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.8" />
+<line x1="48" y1="638" x2="1688" y2="638" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="651.5" class="task" dominant-baseline="central"><tspan class="task-num">3.3</tspan>  Module Coding</text>
+<text x="336" y="651.5" class="assignee" dominant-baseline="central">Andrew Estrella</text>
+<text x="498" y="651.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="707.78" y="645" width="42.8" height="13" rx="3.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.8" />
+<line x1="48" y1="665" x2="1688" y2="665" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="678.5" class="task" dominant-baseline="central"><tspan class="task-num">3.4</tspan>  Code Refinement</text>
+<text x="336" y="678.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="678.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="750.58" y="672" width="8.56" height="13" rx="3.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.8" />
+<line x1="48" y1="692" x2="1688" y2="692" stroke="#f1f5f9" stroke-width="1" />
+<rect x="48" y="692" width="1640" height="27" fill="#d97706" fill-opacity="0.09" />
+<rect x="48" y="692" width="3" height="27" fill="#d97706" />
+<text x="60" y="705.5" class="phase-label" dominant-baseline="central">4. TEST</text>
+<text x="460" y="705.5" class="phase-date" text-anchor="end" dominant-baseline="central">Apr 25 – May 25</text>
+<text x="498" y="705.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="759.14" y="701" width="132.69" height="9" rx="2" fill="#334155" />
+<rect x="759.14" y="710" width="2" height="4" fill="#334155" />
+<rect x="889.84" y="710" width="2" height="4" fill="#334155" />
+<line x1="48" y1="719" x2="1688" y2="719" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="732.5" class="task" dominant-baseline="central"><tspan class="task-num">4.1</tspan>  Unit &amp; Integration Testing</text>
+<text x="336" y="732.5" class="assignee" dominant-baseline="central">Kartein Alicarte</text>
+<text x="498" y="732.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="759.14" y="726" width="47.08" height="13" rx="3.5" fill="#d97706" stroke="#b45309" stroke-width="0.8" />
+<line x1="48" y1="746" x2="1688" y2="746" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="759.5" class="task" dominant-baseline="central"><tspan class="task-num">4.2</tspan>  System &amp; Analytics Validation</text>
+<text x="336" y="759.5" class="assignee" dominant-baseline="central">Andrew Estrella</text>
+<text x="498" y="759.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="806.23" y="753" width="47.08" height="13" rx="3.5" fill="#d97706" stroke="#b45309" stroke-width="0.8" />
+<line x1="48" y1="773" x2="1688" y2="773" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="786.5" class="task" dominant-baseline="central"><tspan class="task-num">4.3</tspan>  User Acceptance Testing</text>
+<text x="336" y="786.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="786.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="853.31" y="780" width="38.52" height="13" rx="3.5" fill="#d97706" stroke="#b45309" stroke-width="0.8" />
+<line x1="48" y1="800" x2="1688" y2="800" stroke="#f1f5f9" stroke-width="1" />
+<rect x="48" y="800" width="1640" height="27" fill="#059669" fill-opacity="0.09" />
+<rect x="48" y="800" width="3" height="27" fill="#059669" />
+<text x="60" y="813.5" class="phase-label" dominant-baseline="central">5. DEPLOY</text>
+<text x="460" y="813.5" class="phase-date" text-anchor="end" dominant-baseline="central">May 26 – Jul 2</text>
+<text x="498" y="813.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="891.84" y="809" width="162.66" height="9" rx="2" fill="#334155" />
+<rect x="891.84" y="818" width="2" height="4" fill="#334155" />
+<rect x="1052.49" y="818" width="2" height="4" fill="#334155" />
+<line x1="48" y1="827" x2="1688" y2="827" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="840.5" class="task" dominant-baseline="central"><tspan class="task-num">5.1</tspan>  System Deployment &amp; Hosting</text>
+<text x="336" y="840.5" class="assignee" dominant-baseline="central">Andrew Estrella</text>
+<text x="498" y="840.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="891.84" y="834" width="59.93" height="13" rx="3.5" fill="#059669" stroke="#047857" stroke-width="0.8" />
+<line x1="48" y1="854" x2="1688" y2="854" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="867.5" class="task" dominant-baseline="central"><tspan class="task-num">5.2</tspan>  User Manual &amp; Training</text>
+<text x="336" y="862.9" class="assignee" dominant-baseline="central">Janealyn Perez &amp;</text>
+<text x="336" y="872.7" class="assignee" dominant-baseline="central">Trisha A. Antoniano</text>
+<text x="498" y="867.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="951.76" y="861" width="64.21" height="13" rx="3.5" fill="#059669" stroke="#047857" stroke-width="0.8" />
+<line x1="48" y1="881" x2="1688" y2="881" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="894.5" class="task" dominant-baseline="central"><tspan class="task-num">5.3</tspan>  Initial Release</text>
+<text x="336" y="894.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="894.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="1015.97" y="888" width="38.52" height="13" rx="3.5" fill="#059669" stroke="#047857" stroke-width="0.8" />
+<line x1="48" y1="908" x2="1688" y2="908" stroke="#f1f5f9" stroke-width="1" />
+<rect x="48" y="908" width="1640" height="27" fill="#db2777" fill-opacity="0.09" />
+<rect x="48" y="908" width="3" height="27" fill="#db2777" />
+<text x="60" y="921.5" class="phase-label" dominant-baseline="central">6. REVIEW</text>
+<text x="460" y="921.5" class="phase-date" text-anchor="end" dominant-baseline="central">Jul 3 – Aug 30</text>
+<text x="498" y="921.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="1054.49" y="917" width="252.55" height="9" rx="2" fill="#334155" />
+<rect x="1054.49" y="926" width="2" height="4" fill="#334155" />
+<rect x="1305.04" y="926" width="2" height="4" fill="#334155" />
+<line x1="48" y1="935" x2="1688" y2="935" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="948.5" class="task" dominant-baseline="central"><tspan class="task-num">6.1</tspan>  Pilot Test Feedback</text>
+<text x="336" y="948.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="948.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="1054.49" y="942" width="119.85" height="13" rx="3.5" fill="#db2777" stroke="#be185d" stroke-width="0.8" />
+<line x1="48" y1="962" x2="1688" y2="962" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="975.5" class="task" dominant-baseline="central"><tspan class="task-num">6.2</tspan>  Pre-Launch Bug Fixes</text>
+<text x="336" y="975.5" class="assignee" dominant-baseline="central">Andrew Estrella</text>
+<text x="498" y="975.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="1178.63" y="969" width="128.41" height="13" rx="3.5" fill="#db2777" stroke="#be185d" stroke-width="0.8" />
+<line x1="48" y1="989" x2="1688" y2="989" stroke="#f1f5f9" stroke-width="1" />
+<rect x="48" y="989" width="1640" height="27" fill="#dc2626" fill-opacity="0.09" />
+<rect x="48" y="989" width="3" height="27" fill="#dc2626" />
+<text x="60" y="1002.5" class="phase-label" dominant-baseline="central">7. LAUNCH</text>
+<text x="460" y="1002.5" class="phase-date" text-anchor="end" dominant-baseline="central">Aug 21 – Nov 27</text>
+<text x="498" y="1002.5" class="pct-open" text-anchor="middle" dominant-baseline="central">In progress</text>
+<rect x="1264.24" y="998" width="423.76" height="9" rx="2" fill="#334155" />
+<rect x="1264.24" y="1007" width="2" height="4" fill="#334155" />
+<rect x="1686" y="1007" width="2" height="4" fill="#334155" />
+<line x1="48" y1="1016" x2="1688" y2="1016" stroke="#e2e8f0" stroke-width="1" />
+<text x="60" y="1029.5" class="task" dominant-baseline="central"><tspan class="task-num">7.1</tspan>  System Go-Live</text>
+<text x="336" y="1029.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="1029.5" class="pct" text-anchor="middle" dominant-baseline="central">100%</text>
+<rect x="1264.24" y="1023" width="124.13" height="13" rx="3.5" fill="#dc2626" stroke="#b91c1c" stroke-width="0.8" />
+<line x1="48" y1="1043" x2="1688" y2="1043" stroke="#f1f5f9" stroke-width="1" />
+<text x="60" y="1056.5" class="task" dominant-baseline="central"><tspan class="task-num">7.2</tspan>  Final Defense &amp; Documentation</text>
+<text x="336" y="1056.5" class="assignee" dominant-baseline="central">All</text>
+<text x="498" y="1056.5" class="pct-open" text-anchor="middle" dominant-baseline="central">In progress</text>
+<rect x="1388.37" y="1050" width="299.63" height="13" rx="3.5" fill="url(#hatch)" stroke="#b91c1c" stroke-width="1.3" stroke-dasharray="4 2" />
+<text x="1538.18" y="1056.5" class="inprogress" text-anchor="middle" dominant-baseline="central">In progress</text>
+<line x1="48" y1="1070" x2="1688" y2="1070" stroke="#f1f5f9" stroke-width="1" />
+<line x1="1628.07" y1="152" x2="1628.07" y2="1070" stroke="#dc2626" stroke-width="1.35" stroke-dasharray="5 4" opacity="0.85" />
+<rect x="1583.07" y="1073" width="90" height="16" rx="8" fill="#dc2626" />
+<text x="1628.07" y="1081.4" class="today-label" text-anchor="middle" dominant-baseline="central">TODAY · NOV 14</text>
+<line x1="48" y1="1093" x2="1688" y2="1093" stroke="#e2e8f0" stroke-width="1" />
+<text x="48" y="1110" class="note">All activities are 100% complete except 7.2 Final Defense &amp; Documentation, which is in progress on the data date.</text>
+<text x="48" y="1126" class="note">Activity colors follow their phase; phase bars summarize each SDLC phase and activity bars show planned start and end dates.</text>
+<text x="1688" y="1110" class="source" text-anchor="end">Source: CPMMIS complete 7-phase SDLC activity schedule</text>
+<text x="1688" y="1126" class="source" text-anchor="end">Bars reflect planned dates; actual dates and percent complete per source table</text>
+</svg>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1160" viewBox="0 0 1760 1160" role="img" aria-labelledby="cbaTitle cbaDesc">
+<title id="cbaTitle">CPMMIS Cost-Benefit Analysis at a Glance</title>
+<desc id="cbaDesc">One-page cost-benefit summary for the Capstone Project Management and Monitoring Information System, including development and operating costs, annual benefits, cumulative net benefit, payback period, and sensitivity analysis.</desc>
+<defs>
+  <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="112%">
+    <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.10" />
+  </filter>
+  <filter id="panelShadow" x="-3%" y="-3%" width="106%" height="108%">
+    <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.05" />
+  </filter>
+  <linearGradient id="pnlGradient" x1="0" y1="290" x2="0" y2="545" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#10b981" stop-opacity="0.20" />
+    <stop offset="73.3%" stop-color="#10b981" stop-opacity="0.10" />
+    <stop offset="73.3%" stop-color="#ef4444" stop-opacity="0.10" />
+    <stop offset="100%" stop-color="#ef4444" stop-opacity="0.20" />
+  </linearGradient>
+  <style>
+    .title { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 21px; font-weight: 700; fill: #0f172a; letter-spacing: -0.2px; }
+    .subtitle { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 10.6px; font-weight: 500; fill: #64748b; }
+    .badge { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.4px; font-weight: 700; fill: #047857; letter-spacing: 0.5px; }
+    .kpi-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.8px; font-weight: 700; fill: #64748b; letter-spacing: 0.8px; }
+    .kpi-value { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 23px; font-weight: 700; fill: #0f172a; letter-spacing: -0.4px; }
+    .kpi-sub { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.9px; font-weight: 500; fill: #64748b; }
+    .panel-title { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 12.2px; font-weight: 700; fill: #0f172a; letter-spacing: -0.1px; }
+    .panel-sub { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 500; fill: #64748b; }
+    .bar-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 9.4px; font-weight: 700; fill: #334155; }
+    .bar-text { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #ffffff; }
+    .bar-text-sub { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 600; fill: #ffffff; }
+    .bar-text-dark { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 9px; font-weight: 700; fill: #1e3a8a; }
+    .bar-text-dark-sub { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.8px; font-weight: 600; fill: #1e40af; }
+    .bar-text-on-green { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 9.4px; font-weight: 700; fill: #064e3b; }
+    .legend { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8px; font-weight: 600; fill: #475569; }
+    .note { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 500; fill: #64748b; }
+    .chart-axis { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8px; font-weight: 500; fill: #94a3b8; }
+    .chart-year { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.4px; font-weight: 600; fill: #64748b; }
+    .chart-value { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.4px; font-weight: 700; fill: #047857; }
+    .chart-value-neg { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 700; fill: #b91c1c; }
+    .be-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.6px; font-weight: 700; fill: #b45309; }
+    .benefit-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 500; fill: #334155; }
+    .benefit-value { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 700; fill: #0f172a; }
+    .benefit-total { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 10px; font-weight: 700; fill: #047857; }
+    .tile-label { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.7px; font-weight: 700; fill: #64748b; letter-spacing: 0.6px; }
+    .tile-value { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 17px; font-weight: 700; fill: #0f172a; }
+    .table-head { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.6px; font-weight: 700; fill: #94a3b8; letter-spacing: 0.5px; }
+    .table-text { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.5px; font-weight: 500; fill: #334155; }
+    .table-text-bold { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.5px; font-weight: 700; fill: #0f172a; }
+    .callout-title { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 9.4px; font-weight: 700; fill: #0f172a; }
+    .callout-text { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 8.2px; font-weight: 500; fill: #475569; }
+    .footer { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif; font-size: 7.8px; font-weight: 400; fill: #94a3b8; }
+  </style>
+</defs>
+<rect width="1760" height="1160" fill="#eef2f7" />
+<rect x="20" y="20" width="1720" height="1120" rx="14" fill="#ffffff" stroke="#dbe3ec" stroke-width="1.2" filter="url(#cardShadow)" />
+<text x="48" y="54" class="title">CPMMIS — Cost-Benefit Analysis at a Glance</text>
+<text x="48" y="78" class="subtitle">Capstone Project Management &amp; Monitoring Information System  ·  8-month base case (32 weeks)  ·  Philippine pesos at 2026 price levels</text>
+<rect x="1516" y="40" width="196" height="28" rx="14" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1" />
+<text x="1614" y="58" class="badge" text-anchor="middle">3-YEAR BCR  1.75 : 1</text>
+<rect x="48" y="105" width="323.2" height="88" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="48" y="105" width="323.2" height="3" rx="1.5" fill="#2563eb" />
+<text x="64" y="130" class="kpi-label">DEVELOPMENT COST</text>
+<text x="64" y="159" class="kpi-value">₱376,100</text>
+<text x="64" y="179" class="kpi-sub">one-time · 1,640 person-hours</text>
+<rect x="383.2" y="105" width="323.2" height="88" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="383.2" y="105" width="323.2" height="3" rx="1.5" fill="#7c3aed" />
+<text x="399.2" y="130" class="kpi-label">YEAR 1 OPERATING</text>
+<text x="399.2" y="159" class="kpi-value">₱75,240</text>
+<text x="399.2" y="179" class="kpi-sub">₱6,270 / month</text>
+<rect x="718.4" y="105" width="323.2" height="88" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="718.4" y="105" width="323.2" height="3" rx="1.5" fill="#0f172a" />
+<text x="734.4" y="130" class="kpi-label">YEAR 1 TOTAL COST</text>
+<text x="734.4" y="159" class="kpi-value">₱451,340</text>
+<text x="734.4" y="179" class="kpi-sub">development + operations</text>
+<rect x="1053.6" y="105" width="323.2" height="88" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="1053.6" y="105" width="323.2" height="3" rx="1.5" fill="#059669" />
+<text x="1069.6" y="130" class="kpi-label">ANNUAL BENEFIT</text>
+<text x="1069.6" y="159" class="kpi-value">₱351,000</text>
+<text x="1069.6" y="179" class="kpi-sub">time, printing, archive</text>
+<rect x="1388.8" y="105" width="323.2" height="88" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="1388.8" y="105" width="323.2" height="3" rx="1.5" fill="#d97706" />
+<text x="1404.8" y="130" class="kpi-label">PAYBACK PERIOD</text>
+<text x="1404.8" y="159" class="kpi-value">1.36 years</text>
+<text x="1404.8" y="179" class="kpi-sub">≈16 months · full cost</text>
+<rect x="48" y="215" width="800" height="380" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#panelShadow)" />
+<text x="68" y="245" class="panel-title">Cost breakdown</text>
+<text x="68" y="262" class="panel-sub">Development and Year 1 operations</text>
+<text x="68" y="292" class="bar-label">Development cost · ₱376,100</text>
+<rect x="68" y="302" width="528.37" height="34" rx="5" fill="#2563eb" />
+<rect x="596.37" y="302" width="191.63" height="34" rx="5" fill="#93c5fd" />
+<text x="332.19" y="316" class="bar-text" text-anchor="middle">Personnel</text>
+<text x="332.19" y="329" class="bar-text-sub" text-anchor="middle">₱276,000  ·  73.4%</text>
+<text x="692.19" y="316" class="bar-text-dark" text-anchor="middle">Non-personnel</text>
+<text x="692.19" y="329" class="bar-text-dark-sub" text-anchor="middle">₱100,100  ·  26.6%</text>
+<text x="68" y="366" class="bar-label">Year 1 total cost · ₱451,340</text>
+<rect x="68" y="376" width="599.97" height="34" rx="5" fill="#0f172a" />
+<rect x="667.97" y="376" width="120.03" height="34" rx="5" fill="#10b981" />
+<text x="367.99" y="397" class="bar-text" text-anchor="middle">Development  ₱376,100</text>
+<text x="727.99" y="390" class="bar-text-on-green" text-anchor="middle">Operations</text>
+<text x="727.99" y="403" class="bar-text-on-green" text-anchor="middle">₱75,240</text>
+<circle cx="68" cy="434.5" r="4" fill="#2563eb" />
+<text x="78" y="437" class="legend">Personnel 73.4%</text>
+<circle cx="238" cy="434.5" r="4" fill="#93c5fd" />
+<text x="248" y="437" class="legend">Non-personnel 26.6%</text>
+<circle cx="438" cy="434.5" r="4" fill="#0f172a" />
+<text x="448" y="437" class="legend">Development 83.3%</text>
+<circle cx="618" cy="434.5" r="4" fill="#10b981" />
+<text x="628" y="437" class="legend">Operations 16.7%</text>
+<circle cx="72" cy="470" r="2" fill="#94a3b8" />
+<text x="82" y="473" class="note">Personnel: 4 team members × 8 months · 1,640 person-hours.</text>
+<circle cx="72" cy="488" r="2" fill="#94a3b8" />
+<text x="82" y="491" class="note">Non-personnel: equipment depreciation, Internet, hosting, printing, and 10% contingency.</text>
+<circle cx="72" cy="506" r="2" fill="#94a3b8" />
+<text x="82" y="509" class="note">Software licenses: ₱0 — open-source PHP, MariaDB, Laragon, Git, Tailwind, and Chart.js.</text>
+<rect x="68" y="532" width="720" height="42" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<text x="84" y="549" class="kpi-label">EFFECTIVE COST</text>
+<text x="84" y="566" class="bar-label">₱47,013 per month  ·  ₱229 per person-hour</text>
+<text x="788" y="566" class="note" text-anchor="end">1,640 hours</text>
+<rect x="880" y="215" width="832" height="380" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#panelShadow)" />
+<text x="900" y="245" class="panel-title">Cumulative net benefit</text>
+<text x="900" y="262" class="panel-sub">Full economic cost · 5-year view · break-even in year 1.36</text>
+<line x1="930" y1="545" x2="1660" y2="545" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="547.6" class="chart-axis" text-anchor="end">−₱400k</text>
+<line x1="930" y1="511" x2="1660" y2="511" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="513.6" class="chart-axis" text-anchor="end">−₱200k</text>
+<line x1="930" y1="477" x2="1660" y2="477" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="479.6" class="chart-axis" text-anchor="end">₱0</text>
+<line x1="930" y1="443" x2="1660" y2="443" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="445.6" class="chart-axis" text-anchor="end">₱200k</text>
+<line x1="930" y1="409" x2="1660" y2="409" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="411.6" class="chart-axis" text-anchor="end">₱400k</text>
+<line x1="930" y1="375" x2="1660" y2="375" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="377.6" class="chart-axis" text-anchor="end">₱600k</text>
+<line x1="930" y1="341" x2="1660" y2="341" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="343.6" class="chart-axis" text-anchor="end">₱800k</text>
+<line x1="930" y1="307" x2="1660" y2="307" stroke="#eef2f7" stroke-width="1" />
+<text x="920" y="309.6" class="chart-axis" text-anchor="end">₱1.0M</text>
+<line x1="930" y1="477" x2="1660" y2="477" stroke="#94a3b8" stroke-width="1.1" stroke-dasharray="4 3" />
+<path d="M 930 477 L 930 540.94 L 1076 494.06 L 1222 447.18 L 1368 400.3 L 1514 353.42 L 1660 306.54 L 1660 477 Z" fill="url(#pnlGradient)" />
+<polyline points="930,540.94 1076,494.06 1222,447.18 1368,400.3 1514,353.42 1660,306.54" fill="none" stroke="#0f172a" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" />
+<circle cx="930" cy="540.94" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" />
+<circle cx="1076" cy="494.06" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" />
+<circle cx="1222" cy="447.18" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" />
+<circle cx="1368" cy="400.3" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" />
+<circle cx="1514" cy="353.42" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" />
+<circle cx="1660" cy="306.54" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1.8" />
+<text x="938" y="528.94" class="chart-value-neg">−₱376,100</text>
+<text x="1084" y="510.06" class="chart-value-neg">−₱100,340</text>
+<text x="1360" y="388.3" class="chart-value" text-anchor="end">₱451,180</text>
+<text x="1654" y="294.54" class="chart-value" text-anchor="end">₱1.00M</text>
+<text x="930" y="562" class="chart-year" text-anchor="middle">Year 0</text>
+<text x="1076" y="562" class="chart-year" text-anchor="middle">Year 1</text>
+<text x="1222" y="562" class="chart-year" text-anchor="middle">Year 2</text>
+<text x="1368" y="562" class="chart-year" text-anchor="middle">Year 3</text>
+<text x="1514" y="562" class="chart-year" text-anchor="middle">Year 4</text>
+<text x="1660" y="562" class="chart-year" text-anchor="middle">Year 5</text>
+<line x1="1129.12" y1="430" x2="1129.12" y2="477" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 3" />
+<circle cx="1129.12" cy="477" r="5" fill="#f59e0b" stroke="#ffffff" stroke-width="2" />
+<rect x="1067.12" y="410" width="124" height="20" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1" />
+<text x="1129.12" y="423" class="be-label" text-anchor="middle">Break-even · 1.36 yrs</text>
+<text x="900" y="578" class="note">Cumulative net benefit = annual benefit − operating cost − development cost.</text>
+<rect x="48" y="615" width="800" height="330" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#panelShadow)" />
+<text x="68" y="645" class="panel-title">Annual benefits · ₱351,000</text>
+<text x="68" y="662" class="panel-sub">Quantified recurring value at 100 capstone groups</text>
+<text x="68" y="692" class="benefit-label">Adviser time recovered</text>
+<rect x="270" y="682" width="430" height="13" rx="3" fill="#059669" opacity="0.98" />
+<text x="828" y="692" class="benefit-value" text-anchor="end">₱144,000</text>
+<text x="68" y="721" class="benefit-label">Group leader time recovered</text>
+<rect x="270" y="711" width="238.89" height="13" rx="3" fill="#059669" opacity="0.91" />
+<text x="828" y="721" class="benefit-value" text-anchor="end">₱80,000</text>
+<text x="68" y="750" class="benefit-label">Administrative time recovered</text>
+<rect x="270" y="740" width="179.17" height="13" rx="3" fill="#059669" opacity="0.84" />
+<text x="828" y="750" class="benefit-value" text-anchor="end">₱60,000</text>
+<text x="68" y="779" class="benefit-label">Printing and photocopy avoided</text>
+<rect x="270" y="769" width="125.42" height="13" rx="3" fill="#059669" opacity="0.77" />
+<text x="828" y="779" class="benefit-value" text-anchor="end">₱42,000</text>
+<text x="68" y="808" class="benefit-label">Lost / reworked documents</text>
+<rect x="270" y="798" width="29.86" height="13" rx="3" fill="#059669" opacity="0.7" />
+<text x="828" y="808" class="benefit-value" text-anchor="end">₱10,000</text>
+<text x="68" y="837" class="benefit-label">Faster archive retrieval</text>
+<rect x="270" y="827" width="22.4" height="13" rx="3" fill="#059669" opacity="0.63" />
+<text x="828" y="837" class="benefit-value" text-anchor="end">₱7,500</text>
+<text x="68" y="866" class="benefit-label">Meeting coordination</text>
+<rect x="270" y="856" width="22.4" height="13" rx="3" fill="#059669" opacity="0.56" />
+<text x="828" y="866" class="benefit-value" text-anchor="end">₱7,500</text>
+<line x1="68" y1="890" x2="828" y2="890" stroke="#e2e8f0" stroke-width="1" />
+<text x="68" y="916" class="bar-label">Total annual benefit</text>
+<text x="828" y="916" class="benefit-total" text-anchor="end">₱351,000</text>
+<text x="68" y="936" class="note">Sources: recovered staff and student time, avoided printing, faster retrieval, fewer lost documents.</text>
+<rect x="880" y="615" width="832" height="330" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#panelShadow)" />
+<text x="900" y="645" class="panel-title">Investment indicators</text>
+<text x="900" y="662" class="panel-sub">Full economic cost · sensitivity of payback and 3-year BCR</text>
+<rect x="900" y="678" width="396" height="58" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="900" y="678" width="3" height="58" rx="1.5" fill="#2563eb" />
+<text x="916" y="698" class="tile-label">3-YEAR ROI</text>
+<text x="916" y="723" class="tile-value">75.0%</text>
+<rect x="1308" y="678" width="396" height="58" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="1308" y="678" width="3" height="58" rx="1.5" fill="#059669" />
+<text x="1324" y="698" class="tile-label">3-YEAR BCR</text>
+<text x="1324" y="723" class="tile-value">1.75 : 1</text>
+<rect x="900" y="744" width="396" height="58" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="900" y="744" width="3" height="58" rx="1.5" fill="#7c3aed" />
+<text x="916" y="764" class="tile-label">5-YEAR ROI</text>
+<text x="916" y="789" class="tile-value">133.3%</text>
+<rect x="1308" y="744" width="396" height="58" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+<rect x="1308" y="744" width="3" height="58" rx="1.5" fill="#0d9488" />
+<text x="1324" y="764" class="tile-label">5-YEAR BCR</text>
+<text x="1324" y="789" class="tile-value">2.33 : 1</text>
+<text x="900" y="825" class="bar-label">Sensitivity analysis</text>
+<text x="900" y="844" class="table-head">SCENARIO</text>
+<text x="1200" y="844" class="table-head" text-anchor="end">ANNUAL BENEFIT</text>
+<text x="1450" y="844" class="table-head" text-anchor="end">PAYBACK</text>
+<text x="1692" y="844" class="table-head" text-anchor="end">3-YEAR BCR</text>
+<text x="900" y="866" class="table-text">Conservative (-25%)</text>
+<text x="1200" y="866" class="table-text" text-anchor="end">₱263,250</text>
+<text x="1450" y="866" class="table-text" text-anchor="end">2.00 yrs</text>
+<text x="1692" y="866" class="table-text" text-anchor="end">1.31 : 1</text>
+<rect x="892" y="876" width="800" height="24" rx="4" fill="#eff6ff" />
+<text x="900" y="890" class="table-text-bold">Base case</text>
+<text x="1200" y="890" class="table-text-bold" text-anchor="end">₱351,000</text>
+<text x="1450" y="890" class="table-text-bold" text-anchor="end">1.36 yrs</text>
+<text x="1692" y="890" class="table-text-bold" text-anchor="end">1.75 : 1</text>
+<text x="900" y="914" class="table-text">Optimistic (+20%)</text>
+<text x="1200" y="914" class="table-text" text-anchor="end">₱421,200</text>
+<text x="1450" y="914" class="table-text" text-anchor="end">1.09 yrs</text>
+<text x="1692" y="914" class="table-text" text-anchor="end">2.10 : 1</text>
+<rect x="48" y="965" width="820" height="100" rx="10" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1" />
+<text x="68" y="990" class="callout-title">Cash basis — student labor donated</text>
+<text x="68" y="1012" class="callout-text">Development cash outlay ₱100,100  ·  Year 1 cash cost ₱175,340  ·  Year 1 net cash benefit ₱175,660</text>
+<text x="68" y="1032" class="callout-text">Cash payback ≈ 4 months of operation; this is the institution&apos;s actual cash view.</text>
+<text x="68" y="1050" class="note">Full economic cost remains the correct basis for comparing CPMMIS with a commercially developed system.</text>
+<rect x="880" y="965" width="832" height="100" rx="10" fill="#fffbeb" stroke="#fde68a" stroke-width="1" />
+<text x="900" y="990" class="callout-title">Schedule-aligned view — 9-month Gantt (March–November 2026)</text>
+<text x="900" y="1012" class="callout-text">Development ₱421,050  ·  Year 1 total ₱496,290  ·  Year 1 net −₱145,290</text>
+<text x="900" y="1032" class="callout-text">Payback ≈ 1.53 years  ·  3-year BCR ≈ 1.84 : 1  ·  5-year BCR ≈ 2.43 : 1</text>
+<text x="900" y="1050" class="note">Use this variant if the manuscript follows the 7-phase Gantt schedule instead of the 32-week base case.</text>
+<line x1="48" y1="1084" x2="1712" y2="1084" stroke="#e2e8f0" stroke-width="1" />
+<text x="48" y="1102" class="footer">Planning estimates in Philippine pesos at 2026 price levels. Benefits assume 100 capstone groups, 12 advisers, and 2 admin staff.</text>
+<text x="1712" y="1102" class="footer" text-anchor="end">Source: docs/cpmmis-cost-benefit-analysis.md</text>
+<text x="48" y="1118" class="footer">Software licenses: ₱0 · open-source stack (PHP, MariaDB, Laragon, Git, GitHub Free, Tailwind, Chart.js).</text>
+<text x="1712" y="1118" class="footer" text-anchor="end">Data date: November 14, 2026</text>
+</svg>

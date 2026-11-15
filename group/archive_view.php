@@ -71,10 +71,7 @@ function render_archive_rows($conn, $search, $year, $adviser, $tab) {
 
             $fn = basename($row['file_path']);
             $url = htmlspecialchars('../backend/serve_file.php?type=archive&file=' . rawurlencode($fn), ENT_QUOTES, 'UTF-8');
-            $ext = strtolower(pathinfo($fn, PATHINFO_EXTENSION));
-            $ext_js = htmlspecialchars(addslashes($ext), ENT_QUOTES, 'UTF-8');
             $t_html = htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8');
-            $t_js = htmlspecialchars(addslashes($row['title']), ENT_QUOTES, 'UTF-8');
 
             echo "<tr id='row-{$row['id']}' class='hover:bg-white/[0.02] transition-all group'>
                     <td class='px-10 py-6'>
@@ -87,7 +84,7 @@ function render_archive_rows($conn, $search, $year, $adviser, $tab) {
                     </td>
                     <td class='px-10 py-6 text-center'>
                         <div class='inline-flex items-center justify-center gap-3'>
-                            <button onclick=\"openFileViewer('$url', '$t_js', '$ext_js')\" class='icon-tooltip w-10 h-10 inline-flex items-center justify-center bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl transition shadow-sm' data-tip='VIEW REPOSITORY FILE'>
+                            <button type=\"button\" onclick=\"openArchiveContents({$row['id']}, this.dataset.title)\" data-title=\"$t_html\" title=\"View PDF Chapters\" class='icon-tooltip w-10 h-10 inline-flex items-center justify-center bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl transition shadow-sm' data-tip='VIEW PDF CHAPTERS'>
                                 <i class='fas fa-eye text-xs'></i>
                             </button>
                             <a href='$url' download class='w-10 h-10 inline-flex items-center justify-center bg-slate-100 border border-gray-200 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl transition shadow-sm' title='Download File'>
@@ -158,11 +155,14 @@ $unread_stmt->close();
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light">
     <title>Archive Vault | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <style>html,body{background-color:#F0F2F5;color-scheme:light}body{color:#1c1e21;overflow-x:hidden}</style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -206,6 +206,10 @@ $unread_stmt->close();
             .sidebar-backdrop.open { display: block; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <?php ob_end_flush(); ?>
 <body class="min-h-screen flex" style="background-color:#F0F2F5">
@@ -378,23 +382,23 @@ $unread_stmt->close();
 
         <div class="sticky top-0 z-50 -mx-4 px-4 py-3 bg-gradient-to-b from-[#F0F2F5] via-[#F0F2F5]/90 to-transparent backdrop-blur-md">
             <nav class="premium-card rounded-[2.5rem] px-8 py-4 flex flex-wrap justify-between items-center shadow-2xl gap-4 bg-white border border-gray-200">
-                <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-gray-200">
-                    <button onclick="filterTab('all')" id="tab-all" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active">All</button>
-                    <button onclick="filterTab('best')" id="tab-best" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600">🏆 Best</button>
-                    <button onclick="filterTab('regular')" id="tab-regular" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600">Standard</button>
+                <div class="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-gray-200 w-full sm:w-auto overflow-x-auto">
+                    <button onclick="filterTab('all')" id="tab-all" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active whitespace-nowrap">All</button>
+                    <button onclick="filterTab('best')" id="tab-best" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap">🏆 Best</button>
+                    <button onclick="filterTab('regular')" id="tab-regular" class="tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap">Standard</button>
                 </div>
-                <div class="flex items-center gap-3 flex-1 justify-center max-w-2xl">
-                    <div class="relative flex-1 group min-w-[200px]">
+                <div class="flex flex-wrap items-center gap-3 flex-1 justify-center max-w-2xl w-full sm:w-auto">
+                    <div class="relative flex-1 group min-w-0 w-full sm:w-auto sm:min-w-[200px]">
                         <input type="text" id="searchInput" oninput="fetchResults()" placeholder="SEARCH VAULT..." class="w-full bg-slate-100 border border-gray-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase text-slate-900 outline-none focus:border-blue-500/50 shadow-inner">
                         <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
                     </div>
-                    <select id="yearSelect" onchange="fetchResults()" class="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer focus:border-blue-500/50 shadow-inner">
+                    <select id="yearSelect" onchange="fetchResults()" class="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer focus:border-blue-500/50 shadow-inner">
                         <option value="all" class="bg-white text-slate-900 font-bold uppercase">All Years</option>
                         <?php while ($yr = mysqli_fetch_assoc($years_query)): ?>
                             <option value="<?php echo htmlspecialchars($yr['year'], ENT_QUOTES, 'UTF-8'); ?>" class="bg-white text-slate-900 font-bold uppercase"><?php echo htmlspecialchars($yr['year'], ENT_QUOTES, 'UTF-8'); ?></option>
                         <?php endwhile; ?>
                     </select>
-                    <select id="adviserSelect" onchange="fetchResults()" class="bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer max-w-[150px] focus:border-blue-500/50 shadow-inner">
+                    <select id="adviserSelect" onchange="fetchResults()" class="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-600 outline-none cursor-pointer max-w-none sm:max-w-[150px] focus:border-blue-500/50 shadow-inner">
                         <option value="all" class="bg-white text-slate-900 font-bold uppercase">All Advisers</option>
                         <?php foreach ($registered_advisers as $adv_name): ?>
                             <option value="<?php echo htmlspecialchars($adv_name, ENT_QUOTES, 'UTF-8'); ?>" class="bg-white text-slate-900 font-bold uppercase"><?php echo htmlspecialchars(strtoupper($adv_name), ENT_QUOTES, 'UTF-8'); ?></option>
@@ -575,9 +579,9 @@ $unread_stmt->close();
 
         function filterTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(function(b) { b.className = 'tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600'; });
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.className = 'tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-slate-500 hover:text-blue-600 whitespace-nowrap'; });
             var a = document.getElementById('tab-' + tab);
-            if (a) a.className = 'tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active';
+            if (a) a.className = 'tab-btn flex-1 sm:flex-none px-4 sm:px-6 py-2 rounded-xl text-[10px] font-black uppercase transition text-white bg-gradient-to-r from-blue-600 to-blue-500 shadow-sm active whitespace-nowrap';
             fetchResults();
         }
 
@@ -756,6 +760,7 @@ function updateLiveTimes() {
 setInterval(updateLiveTimes, 30000);
 updateLiveTimes();
 </script>
+<?php include('../components/archive_contents.php'); ?>
 <?php include('chat_widget.php'); ?>
 </body>
 </html>

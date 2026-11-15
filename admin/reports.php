@@ -24,6 +24,180 @@ $stmt->bind_param("i", $admin_id);
 $stmt->execute();
 $logins_q = $stmt->get_result();
 $selected_year = isset($_GET['year']) ? strip_tags($_GET['year']) : $present_ay;
+$active_tab = (isset($_GET['tab']) && $_GET['tab'] === 'activity') ? 'activity' : 'analytics';
+
+// --- ACTIVITY LOG FILTERS ---
+$activity_role = isset($_GET['role']) && is_string($_GET['role']) ? strtolower(trim($_GET['role'])) : 'all';
+$activity_allowed_roles = ['all', 'admin', 'adviser', 'group', 'panelist'];
+if (!in_array($activity_role, $activity_allowed_roles, true)) {
+    $activity_role = 'all';
+}
+$activity_search = isset($_GET['q']) && is_string($_GET['q']) ? trim($_GET['q']) : '';
+$activity_from = isset($_GET['date_from']) && is_string($_GET['date_from']) ? trim($_GET['date_from']) : '';
+$activity_to = isset($_GET['date_to']) && is_string($_GET['date_to']) ? trim($_GET['date_to']) : '';
+$activity_valid_date = static function ($value) {
+    if (!is_string($value) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+        return false;
+    }
+    $date = DateTime::createFromFormat('Y-m-d', $value);
+    return $date instanceof DateTime && $date->format('Y-m-d') === $value;
+};
+if (!$activity_valid_date($activity_from)) {
+    $activity_from = '';
+}
+if (!$activity_valid_date($activity_to)) {
+    $activity_to = '';
+}
+$activity_page = isset($_GET['activity_page']) && is_scalar($_GET['activity_page'])
+    ? max(1, (int)$_GET['activity_page'])
+    : 1;
+$activity_per_page = 25;
+
+$activity_where = [];
+$activity_params = [];
+$activity_types = '';
+if ($activity_role !== 'all') {
+    $activity_where[] = 'user_role = ?';
+    $activity_params[] = $activity_role;
+    $activity_types .= 's';
+}
+if ($activity_search !== '') {
+    $activity_where[] = '(username LIKE ? OR action LIKE ? OR details LIKE ? OR ip_address LIKE ?)';
+    $activity_like = '%' . $activity_search . '%';
+    array_push($activity_params, $activity_like, $activity_like, $activity_like, $activity_like);
+    $activity_types .= 'ssss';
+}
+if ($activity_from !== '') {
+    $activity_where[] = 'created_at >= ?';
+    $activity_params[] = $activity_from . ' 00:00:00';
+    $activity_types .= 's';
+}
+if ($activity_to !== '') {
+    $activity_where[] = 'created_at <= ?';
+    $activity_params[] = $activity_to . ' 23:59:59';
+    $activity_types .= 's';
+}
+$activity_where_sql = count($activity_where) > 0 ? ' WHERE ' . implode(' AND ', $activity_where) : '';
+$activity_has_filters = $activity_role !== 'all' || $activity_search !== '' || $activity_from !== '' || $activity_to !== '';
+
+$activity_bind = static function ($stmt, string $types, array $params): void {
+    if ($types === '') {
+        return;
+    }
+    $args = [$types];
+    foreach ($params as $index => $value) {
+        $args[] = &$params[$index];
+    }
+    call_user_func_array([$stmt, 'bind_param'], $args);
+};
+$activity_csv_safe = static function ($value) {
+    $value = (string)$value;
+    if ($value !== '' && in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
+        return "'" . $value;
+    }
+    return $value;
+};
+
+// --- ACTIVITY CSV EXPORT ---
+if (isset($_GET['export']) && $_GET['export'] === 'activity_csv') {
+    $export_sql = "SELECT created_at, user_id, username, user_role, action, details, ip_address
+                   FROM activity_logs" . $activity_where_sql . "
+                   ORDER BY created_at DESC, id DESC";
+    $export_stmt = $conn->prepare($export_sql);
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="cpmmis_activity_log_' . date('Ymd_His') . '.csv"');
+    $out = fopen('php://output', 'w');
+    fwrite($out, "\xEF\xBB\xBF");
+    fputcsv($out, ['CPMMIS Activity Log', 'Generated: ' . date('Y-m-d H:i:s')]);
+    fputcsv($out, []);
+    fputcsv($out, ['Date & Time', 'User ID', 'Username', 'Role', 'Action', 'Details', 'IP Address']);
+
+    if ($export_stmt) {
+        $activity_bind($export_stmt, $activity_types, $activity_params);
+        $export_stmt->execute();
+        $export_result = $export_stmt->get_result();
+        while ($export_row = $export_result->fetch_assoc()) {
+            fputcsv($out, [
+                $activity_csv_safe($export_row['created_at']),
+                $export_row['user_id'],
+                $activity_csv_safe($export_row['username']),
+                $activity_csv_safe($export_row['user_role']),
+                $activity_csv_safe($export_row['action']),
+                $activity_csv_safe($export_row['details']),
+                $activity_csv_safe($export_row['ip_address'])
+            ]);
+        }
+        $export_stmt->close();
+    }
+    fclose($out);
+    exit;
+}
+
+// --- ACTIVITY SUMMARY (ALL-TIME) ---
+$activity_summary = ['total' => 0, 'users' => 0, 'logins_today' => 0, 'latest' => null];
+$activity_role_counts = [];
+$activity_summary_res = $conn->query("SELECT COUNT(*) AS total,
+        COUNT(DISTINCT user_role, user_id) AS users,
+        SUM(action = 'Logged in' AND DATE(created_at) = CURDATE()) AS logins_today,
+        MAX(created_at) AS latest
+    FROM activity_logs");
+if ($activity_summary_res) {
+    $activity_summary_row = $activity_summary_res->fetch_assoc();
+    $activity_summary = [
+        'total' => (int)($activity_summary_row['total'] ?? 0),
+        'users' => (int)($activity_summary_row['users'] ?? 0),
+        'logins_today' => (int)($activity_summary_row['logins_today'] ?? 0),
+        'latest' => $activity_summary_row['latest'] ?? null
+    ];
+}
+$activity_role_count_res = $conn->query("SELECT user_role, COUNT(*) AS total FROM activity_logs GROUP BY user_role");
+if ($activity_role_count_res) {
+    while ($activity_role_count_row = $activity_role_count_res->fetch_assoc()) {
+        $activity_role_counts[strtolower((string)$activity_role_count_row['user_role'])] = (int)$activity_role_count_row['total'];
+    }
+}
+$activity_latest_ts = !empty($activity_summary['latest']) ? strtotime($activity_summary['latest']) : null;
+$activity_latest_relative = '';
+if ($activity_latest_ts) {
+    $activity_latest_relative = getRelativeTime($activity_latest_ts);
+    $activity_latest_relative = $activity_latest_relative === 'now'
+        ? 'just now'
+        : $activity_latest_relative . ' ago';
+}
+
+$activity_role_meta = [
+    'admin' => ['label' => 'Admin', 'icon' => 'fa-user-shield', 'badge' => 'bg-blue-500/10 text-blue-600', 'avatar' => 'bg-blue-500/10 text-blue-500'],
+    'adviser' => ['label' => 'Adviser', 'icon' => 'fa-user-tie', 'badge' => 'bg-violet-500/10 text-violet-600', 'avatar' => 'bg-violet-500/10 text-violet-500'],
+    'group' => ['label' => 'Group', 'icon' => 'fa-users', 'badge' => 'bg-emerald-500/10 text-emerald-600', 'avatar' => 'bg-emerald-500/10 text-emerald-500'],
+    'panelist' => ['label' => 'Panelist', 'icon' => 'fa-user-check', 'badge' => 'bg-amber-500/10 text-amber-600', 'avatar' => 'bg-amber-500/10 text-amber-500']
+];
+$activity_default_role_meta = ['label' => 'System', 'icon' => 'fa-circle-info', 'badge' => 'bg-slate-100 text-slate-600', 'avatar' => 'bg-slate-100 text-slate-500'];
+$activity_action_meta = static function ($action) {
+    $value = strtolower((string)$action);
+    if (strpos($value, 'logged in') !== false) {
+        return ['icon' => 'fa-sign-in-alt', 'classes' => 'bg-emerald-500/10 text-emerald-600'];
+    }
+    if (strpos($value, 'logged out') !== false) {
+        return ['icon' => 'fa-sign-out-alt', 'classes' => 'bg-slate-100 text-slate-500'];
+    }
+    if (strpos($value, 'delete') !== false || strpos($value, 'declin') !== false || strpos($value, 'reject') !== false || strpos($value, 'suspend') !== false || strpos($value, 'remove') !== false) {
+        return ['icon' => 'fa-ban', 'classes' => 'bg-rose-500/10 text-rose-500'];
+    }
+    if (strpos($value, 'password') !== false || strpos($value, 'reset') !== false) {
+        return ['icon' => 'fa-key', 'classes' => 'bg-amber-500/10 text-amber-600'];
+    }
+    if (strpos($value, 'approv') !== false || strpos($value, 'accept') !== false || strpos($value, 'added') !== false || strpos($value, 'created') !== false || strpos($value, 'registered') !== false) {
+        return ['icon' => 'fa-check-circle', 'classes' => 'bg-blue-500/10 text-blue-600'];
+    }
+    if (strpos($value, 'archive') !== false || strpos($value, 'upload') !== false || strpos($value, 'submit') !== false || strpos($value, 'request') !== false) {
+        return ['icon' => 'fa-cloud-upload-alt', 'classes' => 'bg-violet-500/10 text-violet-600'];
+    }
+    return ['icon' => 'fa-circle', 'classes' => 'bg-slate-100 text-slate-500'];
+};
+$activity_escape = static function ($value) {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+};
 
 // --- INLINE NOTIFICATION UPDATER STATE TRIGGER ---
 if (isset($_GET['action']) && $_GET['action'] === 'clear_reg_notifications') {
@@ -261,7 +435,7 @@ $kpi_pending_submissions = $sub_totals['pending'] ?? 0;
 $kpi_overdue_count = count($overdue_rows);
 
 // --- CSV EXPORT ---
-if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+if (isset($_GET['export']) && $_GET['export'] === 'csv' && $active_tab === 'analytics') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="cpmmis_reports_' . $selected_year . '.csv"');
     $out = fopen('php://output', 'w');
@@ -327,16 +501,86 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     fclose($out);
     exit;
 }
+
+// --- ACTIVITY LOG PAGINATION ---
+$activity_rows = [];
+$activity_filtered_total = 0;
+$activity_total_pages = 1;
+$activity_range_start = 0;
+$activity_range_end = 0;
+if ($active_tab === 'activity') {
+    $activity_count_sql = "SELECT COUNT(*) AS total FROM activity_logs" . $activity_where_sql;
+    $activity_count_stmt = $conn->prepare($activity_count_sql);
+    if ($activity_count_stmt) {
+        $activity_bind($activity_count_stmt, $activity_types, $activity_params);
+        $activity_count_stmt->execute();
+        $activity_filtered_total = (int)($activity_count_stmt->get_result()->fetch_assoc()['total'] ?? 0);
+        $activity_count_stmt->close();
+    }
+
+    $activity_total_pages = max(1, (int)ceil($activity_filtered_total / $activity_per_page));
+    if ($activity_page > $activity_total_pages) {
+        $activity_page = $activity_total_pages;
+    }
+    $activity_offset = ($activity_page - 1) * $activity_per_page;
+    $activity_range_start = $activity_filtered_total > 0 ? $activity_offset + 1 : 0;
+    $activity_range_end = min($activity_offset + $activity_per_page, $activity_filtered_total);
+
+    $activity_rows_sql = "SELECT id, user_id, user_role, username, action, details, ip_address, created_at
+                          FROM activity_logs" . $activity_where_sql . "
+                          ORDER BY created_at DESC, id DESC
+                          LIMIT ? OFFSET ?";
+    $activity_rows_stmt = $conn->prepare($activity_rows_sql);
+    if ($activity_rows_stmt) {
+        $activity_row_params = $activity_params;
+        $activity_row_params[] = $activity_per_page;
+        $activity_row_params[] = $activity_offset;
+        $activity_bind($activity_rows_stmt, $activity_types . 'ii', $activity_row_params);
+        $activity_rows_stmt->execute();
+        $activity_rows_result = $activity_rows_stmt->get_result();
+        while ($activity_row = $activity_rows_result->fetch_assoc()) {
+            $activity_rows[] = $activity_row;
+        }
+        $activity_rows_stmt->close();
+    }
+}
+
+$activity_url = static function (array $overrides = []) use ($selected_year, $activity_role, $activity_search, $activity_from, $activity_to) {
+    $params = ['tab' => 'activity', 'year' => $selected_year];
+    if ($activity_role !== 'all') {
+        $params['role'] = $activity_role;
+    }
+    if ($activity_search !== '') {
+        $params['q'] = $activity_search;
+    }
+    if ($activity_from !== '') {
+        $params['date_from'] = $activity_from;
+    }
+    if ($activity_to !== '') {
+        $params['date_to'] = $activity_to;
+    }
+    foreach ($overrides as $key => $value) {
+        if ($value === null || $value === '') {
+            unset($params[$key]);
+        } else {
+            $params[$key] = $value;
+        }
+    }
+    return 'reports.php?' . http_build_query($params);
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta charset="UTF-8">
-    <title>Analytics Reports | CPMMIS</title>
+    <title><?php echo $active_tab === 'activity' ? 'Activity Log' : 'Analytics Reports'; ?> | CPMMIS</title>
     <link rel="icon" type="image/png" href="../chmsu.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <?php if ($active_tab === 'analytics'): ?><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><?php endif; ?>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -432,6 +676,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             .premium-card, .stat-card { box-shadow: none !important; border: 1px solid #dadde1 !important; break-inside: avoid; }
         }
     </style>
+
+    <!-- CPMMIS shared responsive foundation -->
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="../assets/js/responsive.js" defer></script>
 </head>
 <body class="min-h-screen flex">
 
@@ -498,9 +746,16 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
         <nav class="premium-card rounded-[2.5rem] px-4 sm:px-8 py-4 flex flex-wrap justify-between items-center shadow-2xl relative z-[100] gap-2">
             <div class="min-w-0 flex-1">
                 <h1 class="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight truncate">Institutional Intelligence</h1>
-                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] mt-1 truncate">Report for Academic Year: <?php echo htmlspecialchars($selected_year, ENT_QUOTES, 'UTF-8'); ?></p>
+                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] mt-1 truncate">
+                    <?php if ($active_tab === 'activity'): ?>
+                        System-wide audit trail — sign-ins and recorded actions
+                    <?php else: ?>
+                        Report for Academic Year: <?php echo htmlspecialchars($selected_year, ENT_QUOTES, 'UTF-8'); ?>
+                    <?php endif; ?>
+                </p>
             </div>
-            <div class="flex items-center gap-3 shrink-0">
+            <div class="flex flex-wrap items-center justify-start lg:justify-end gap-2 sm:gap-3 shrink-0 w-full lg:w-auto">
+                <?php if ($active_tab === 'analytics'): ?>
                 <form method="GET" action="" id="year_filter_form" class="mr-2">
                     <select name="year" onchange="this.form.submit()" class="bg-white border border-gray-200 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:border-blue-500/50 cursor-pointer shadow-inner">
                         <option value="<?php echo $present_ay; ?>" <?php echo ($selected_year == $present_ay) ? 'selected' : ''; ?>>AY <?php echo $present_ay; ?></option>
@@ -515,6 +770,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
                     <input type="hidden" name="export" value="csv">
                     <button type="submit" class="px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2"><i class="fas fa-download"></i> Export</button>
                 </form>
+                <?php endif; ?>
                 <button type="button" onclick="window.print()" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm flex items-center gap-2 no-print"><i class="fas fa-print"></i> Print / PDF</button>
 
                 <div class="relative nav-icon-container">
@@ -588,8 +844,23 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
                     </div>
                 </div>
             </div>
+
+            <div class="w-full flex flex-wrap items-center gap-2 pt-3 mt-1 border-t border-gray-200 no-print">
+                <a href="reports.php?tab=analytics&amp;year=<?php echo urlencode($selected_year); ?>" class="px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition <?php echo $active_tab === 'analytics' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'; ?>" <?php echo $active_tab === 'analytics' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </a>
+                <a href="reports.php?tab=activity&amp;year=<?php echo urlencode($selected_year); ?>" class="px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition <?php echo $active_tab === 'activity' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'; ?>" <?php echo $active_tab === 'activity' ? 'aria-current="page"' : ''; ?>>
+                    <i class="fas fa-clipboard-list"></i> Activity Log
+                    <span class="px-2 py-0.5 rounded-md text-[8px] <?php echo $active_tab === 'activity' ? 'bg-white/20 text-white' : 'bg-blue-500/10 text-blue-600'; ?>"><?php echo number_format((int)$activity_summary['total']); ?></span>
+                </a>
+                <span class="ml-auto text-[9px] font-bold uppercase tracking-widest text-slate-400 hidden sm:inline-flex items-center gap-1.5">
+                    <i class="fas fa-clock text-[8px] text-blue-400"></i>
+                    <?php echo $activity_latest_relative !== '' ? 'Last event ' . $activity_escape($activity_latest_relative) : 'No events recorded'; ?>
+                </span>
+            </div>
         </nav>
 
+        <?php if ($active_tab === 'analytics'): ?>
         <div class="space-y-10 sm:space-y-12">
 
             <!-- SECTION 1: EXECUTIVE SUMMARY -->
@@ -810,6 +1081,201 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             </section>
 
         </div>
+        <?php else: ?>
+        <div class="space-y-10 sm:space-y-12">
+            <section>
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 shrink-0 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-base"><i class="fas fa-clipboard-list"></i></div>
+                        <div>
+                            <h3 class="text-sm font-black uppercase text-slate-900 tracking-tight">Activity Log</h3>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-blue-400 mt-0.5">Sign-ins and recorded actions across every account</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-600 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-user-shield mr-1.5"></i><?php echo number_format((int)($activity_role_counts['admin'] ?? 0)); ?> admin</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-violet-500/10 text-violet-600 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-user-tie mr-1.5"></i><?php echo number_format((int)($activity_role_counts['adviser'] ?? 0)); ?> adviser</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-users mr-1.5"></i><?php echo number_format((int)($activity_role_counts['group'] ?? 0)); ?> group</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-600 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-user-check mr-1.5"></i><?php echo number_format((int)($activity_role_counts['panelist'] ?? 0)); ?> panelist</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="stat-card p-4 sm:p-8 rounded-[2.5rem] flex items-center justify-between shadow-xl border-blue-500/10">
+                        <div class="min-w-0 flex-1"><p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 truncate">Total Events</p><h2 class="text-3xl font-black text-slate-900"><?php echo number_format((int)$activity_summary['total']); ?></h2></div>
+                        <div class="w-14 h-14 shrink-0 bg-blue-500/10 text-blue-400 rounded-3xl flex items-center justify-center text-xl"><i class="fas fa-clipboard-list"></i></div>
+                    </div>
+                    <div class="stat-card p-4 sm:p-8 rounded-[2.5rem] flex items-center justify-between shadow-xl border-violet-500/10">
+                        <div class="min-w-0 flex-1"><p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 truncate">Unique Users</p><h2 class="text-3xl font-black text-slate-900"><?php echo number_format((int)$activity_summary['users']); ?></h2></div>
+                        <div class="w-14 h-14 shrink-0 bg-violet-500/10 text-violet-500 rounded-3xl flex items-center justify-center text-xl"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="stat-card p-4 sm:p-8 rounded-[2.5rem] flex items-center justify-between shadow-xl border-emerald-500/10">
+                        <div class="min-w-0 flex-1"><p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 truncate">Logins Today</p><h2 class="text-3xl font-black text-slate-900"><?php echo number_format((int)$activity_summary['logins_today']); ?></h2></div>
+                        <div class="w-14 h-14 shrink-0 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center text-xl"><i class="fas fa-sign-in-alt"></i></div>
+                    </div>
+                    <div class="stat-card p-4 sm:p-8 rounded-[2.5rem] flex items-center justify-between shadow-xl border-amber-500/10">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 truncate">Latest Activity</p>
+                            <h2 class="text-xl sm:text-2xl font-black text-slate-900 leading-tight"><?php echo $activity_latest_relative !== '' ? $activity_escape($activity_latest_relative) : '—'; ?></h2>
+                            <p class="text-[8px] font-bold text-slate-500 uppercase tracking-wider mt-1"><?php echo $activity_latest_ts ? $activity_escape(date('M j, Y · g:i A', $activity_latest_ts)) : 'No events yet'; ?></p>
+                        </div>
+                        <div class="w-14 h-14 shrink-0 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center text-xl"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+
+                <div class="premium-card rounded-[2.5rem] p-5 sm:p-8 shadow-xl mt-6 no-print">
+                    <form method="GET" action="reports.php" class="space-y-5">
+                        <input type="hidden" name="tab" value="activity">
+                        <input type="hidden" name="year" value="<?php echo $activity_escape($selected_year); ?>">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-3">
+                            <div class="xl:col-span-2">
+                                <label for="activity-role" class="block text-[9px] font-black uppercase text-slate-500 ml-2 mb-1.5 tracking-widest">Role</label>
+                                <select id="activity-role" name="role" class="w-full bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 outline-none focus:border-blue-500/50 cursor-pointer shadow-inner">
+                                    <option value="all" <?php echo $activity_role === 'all' ? 'selected' : ''; ?>>All roles</option>
+                                    <option value="admin" <?php echo $activity_role === 'admin' ? 'selected' : ''; ?>>Admin</option>
+                                    <option value="adviser" <?php echo $activity_role === 'adviser' ? 'selected' : ''; ?>>Adviser</option>
+                                    <option value="group" <?php echo $activity_role === 'group' ? 'selected' : ''; ?>>Group</option>
+                                    <option value="panelist" <?php echo $activity_role === 'panelist' ? 'selected' : ''; ?>>Panelist</option>
+                                </select>
+                            </div>
+                            <div class="xl:col-span-4">
+                                <label for="activity-search" class="block text-[9px] font-black uppercase text-slate-500 ml-2 mb-1.5 tracking-widest">Search</label>
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
+                                    <input type="search" id="activity-search" name="q" value="<?php echo $activity_escape($activity_search); ?>" placeholder="User, action, details, or IP" class="w-full bg-white border border-gray-200 pl-10 pr-4 py-3 rounded-2xl text-[10px] font-bold text-slate-700 outline-none focus:border-blue-500/50 placeholder:text-slate-400 shadow-inner">
+                                </div>
+                            </div>
+                            <div class="xl:col-span-3">
+                                <label for="activity-from" class="block text-[9px] font-black uppercase text-slate-500 ml-2 mb-1.5 tracking-widest">From</label>
+                                <input type="date" id="activity-from" name="date_from" value="<?php echo $activity_escape($activity_from); ?>" class="w-full bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-bold text-slate-700 outline-none focus:border-blue-500/50 shadow-inner">
+                            </div>
+                            <div class="xl:col-span-3">
+                                <label for="activity-to" class="block text-[9px] font-black uppercase text-slate-500 ml-2 mb-1.5 tracking-widest">To</label>
+                                <input type="date" id="activity-to" name="date_to" value="<?php echo $activity_escape($activity_to); ?>" class="w-full bg-white border border-gray-200 px-4 py-3 rounded-2xl text-[10px] font-bold text-slate-700 outline-none focus:border-blue-500/50 shadow-inner">
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                                <?php if ($activity_has_filters): ?><i class="fas fa-filter mr-1.5 text-blue-400"></i>Filters are active
+                                <?php else: ?><i class="fas fa-list-ul mr-1.5 text-blue-400"></i>All recorded activity, newest first<?php endif; ?>
+                            </p>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <?php if ($activity_has_filters): ?>
+                                <a href="reports.php?tab=activity&amp;year=<?php echo urlencode($selected_year); ?>" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"><i class="fas fa-times"></i> Reset</a>
+                                <?php endif; ?>
+                                <button type="submit" name="export" value="activity_csv" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm flex items-center gap-2"><i class="fas fa-download"></i> Export CSV</button>
+                                <button type="submit" class="px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center gap-2"><i class="fas fa-filter"></i> Apply Filters</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="premium-card rounded-[2.5rem] overflow-hidden shadow-xl mt-6">
+                    <div class="p-6 sm:p-8 pb-5 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 shrink-0 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center text-sm"><i class="fas fa-list-ul"></i></div>
+                            <div>
+                                <h4 class="text-[10px] font-black uppercase text-slate-500 tracking-widest">Recorded Activity</h4>
+                                <p class="text-[9px] font-black uppercase tracking-widest text-blue-400 mt-0.5">
+                                    <?php if ($activity_filtered_total > 0): ?>Showing <?php echo (int)$activity_range_start; ?>–<?php echo (int)$activity_range_end; ?> of <?php echo number_format((int)$activity_filtered_total); ?> events<?php else: ?>No matching events<?php endif; ?>
+                                </p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-circle text-[6px] mr-1.5"></i>Audit Trail</span>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar p-4 sm:p-6">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="p-3.5 text-[9px] font-black uppercase tracking-widest text-slate-500">Date &amp; Time</th>
+                                    <th class="p-3.5 text-[9px] font-black uppercase tracking-widest text-slate-500">User</th>
+                                    <th class="p-3.5 text-[9px] font-black uppercase tracking-widest text-slate-500">Role</th>
+                                    <th class="p-3.5 text-[9px] font-black uppercase tracking-widest text-slate-500">Action</th>
+                                    <th class="p-3.5 text-[9px] font-black uppercase tracking-widest text-slate-500">Details</th>
+                                    <th class="p-3.5 text-[9px] font-black uppercase tracking-widest text-slate-500">IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (count($activity_rows) > 0): ?>
+                                    <?php foreach ($activity_rows as $activity_row):
+                                        $log_ts = !empty($activity_row['created_at']) ? strtotime($activity_row['created_at']) : false;
+                                        $log_role = strtolower(trim((string)($activity_row['user_role'] ?? '')));
+                                        $log_role_meta = $activity_role_meta[$log_role] ?? $activity_default_role_meta;
+                                        $log_action_meta = $activity_action_meta($activity_row['action'] ?? '');
+                                        $log_details = trim((string)($activity_row['details'] ?? ''));
+                                        $log_ip = trim((string)($activity_row['ip_address'] ?? ''));
+                                        $log_relative = $log_ts ? getRelativeTime($log_ts) : '';
+                                        $log_relative = $log_relative === 'now' ? 'just now' : ($log_relative !== '' ? $log_relative . ' ago' : '');
+                                        $log_username = trim((string)($activity_row['username'] ?? ''));
+                                        if ($log_username === '') { $log_username = 'Unknown user'; }
+                                    ?>
+                                    <tr class="border-b border-gray-200 hover:bg-slate-100 transition-all last:border-0">
+                                        <td class="p-3.5 align-top whitespace-nowrap">
+                                            <p class="text-[11px] font-bold text-slate-800"><?php echo $log_ts ? $activity_escape(date('M j, Y', $log_ts)) : '—'; ?></p>
+                                            <p class="text-[9px] font-bold text-slate-500 mt-0.5"><?php echo $log_ts ? $activity_escape(date('g:i:s A', $log_ts)) : ''; ?><?php echo $log_relative !== '' ? ' · ' . $activity_escape($log_relative) : ''; ?></p>
+                                        </td>
+                                        <td class="p-3.5 align-top">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <div class="w-8 h-8 shrink-0 rounded-full <?php echo $log_role_meta['avatar']; ?> flex items-center justify-center"><i class="fas <?php echo $log_role_meta['icon']; ?> text-[10px]"></i></div>
+                                                <div class="min-w-0">
+                                                    <p class="text-[11px] font-bold text-slate-900 break-words"><?php echo $activity_escape($log_username); ?></p>
+                                                    <p class="text-[8px] text-slate-500 uppercase font-black tracking-wider mt-0.5">User #<?php echo (int)$activity_row['user_id']; ?></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-3.5 align-top">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg <?php echo $log_role_meta['badge']; ?> text-[9px] font-black uppercase tracking-widest whitespace-nowrap"><i class="fas <?php echo $log_role_meta['icon']; ?> text-[8px]"></i><?php echo $activity_escape($log_role_meta['label']); ?></span>
+                                        </td>
+                                        <td class="p-3.5 align-top">
+                                            <div class="flex items-start gap-2 max-w-[280px]">
+                                                <span class="w-6 h-6 shrink-0 rounded-lg <?php echo $log_action_meta['classes']; ?> flex items-center justify-center"><i class="fas <?php echo $log_action_meta['icon']; ?> text-[9px]"></i></span>
+                                                <span class="text-[10px] font-black text-slate-700 leading-tight break-words min-w-0"><?php echo $activity_escape($activity_row['action']); ?></span>
+                                            </div>
+                                        </td>
+                                        <td class="p-3.5 align-top">
+                                            <p class="text-[10px] font-semibold text-slate-500 leading-relaxed break-words max-w-[360px]"><?php echo $log_details !== '' ? nl2br($activity_escape($log_details)) : '—'; ?></p>
+                                        </td>
+                                        <td class="p-3.5 align-top">
+                                            <span class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-100 text-[9px] font-black font-mono text-slate-600 whitespace-nowrap"><?php echo $activity_escape($log_ip !== '' ? $log_ip : '—'); ?></span>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="6" class="p-10 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500 italic">
+                                            <?php if ($activity_has_filters): ?>
+                                                No activity matches these filters. <a href="reports.php?tab=activity&amp;year=<?php echo urlencode($selected_year); ?>" class="text-blue-500 hover:text-blue-600 not-italic">Clear filters</a>
+                                            <?php else: ?>
+                                                No activity has been recorded yet.
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php if ($activity_filtered_total > 0): ?>
+                    <div class="px-5 sm:px-8 py-5 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
+                        <p class="text-[9px] font-black uppercase tracking-widest text-slate-500">Page <?php echo (int)$activity_page; ?> of <?php echo (int)$activity_total_pages; ?></p>
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+                            <?php if ($activity_page > 1): ?>
+                            <a href="<?php echo $activity_escape($activity_url(['activity_page' => $activity_page - 1])); ?>" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2"><i class="fas fa-chevron-left text-[8px]"></i> Prev</a>
+                            <?php else: ?>
+                            <span class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 text-[9px] font-black uppercase tracking-widest opacity-50 flex items-center gap-2 cursor-not-allowed"><i class="fas fa-chevron-left text-[8px]"></i> Prev</span>
+                            <?php endif; ?>
+                            <span class="px-4 py-2.5 rounded-xl bg-blue-500/10 text-blue-600 text-[9px] font-black uppercase tracking-widest">Page <?php echo (int)$activity_page; ?> / <?php echo (int)$activity_total_pages; ?></span>
+                            <?php if ($activity_page < $activity_total_pages): ?>
+                            <a href="<?php echo $activity_escape($activity_url(['activity_page' => $activity_page + 1])); ?>" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-2">Next <i class="fas fa-chevron-right text-[8px]"></i></a>
+                            <?php else: ?>
+                            <span class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 text-[9px] font-black uppercase tracking-widest opacity-50 flex items-center gap-2 cursor-not-allowed">Next <i class="fas fa-chevron-right text-[8px]"></i></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+        <?php endif; ?>
     </main>
 
     <div id="drawer-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[300]" onclick="closeSettingsDrawer()"></div>
@@ -946,9 +1412,11 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             }
         };
 
+        <?php if ($active_tab === 'analytics'): ?>
         const textMuted = '#94a3b8';
         const borderGrid = '#dadde1';
-        const chartFontOptions = { family: 'Plus Jakarta Sans', weight: '700', size: 11 };
+        const isCompactChart = window.matchMedia('(max-width: 639px)').matches;
+        const chartFontOptions = { family: 'Plus Jakarta Sans', weight: '700', size: isCompactChart ? 9 : 11 };
 
         // Submission Velocity (line)
         new Chart(document.getElementById('submissionTrendChart'), {
@@ -1052,6 +1520,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
                 }
             }
         });
+        <?php endif; ?>
 
         const CSRF_TOKEN = '<?php echo generate_csrf_token(); ?>';
 
